@@ -1,4 +1,4 @@
-# react_jwt_auth
+# BankTransact
 
 To install dependencies:
 
