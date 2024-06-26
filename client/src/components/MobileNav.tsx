@@ -1,9 +1,18 @@
 import Logo from "./Logo";
-import Sidebar from "./Sidebar";
+import { cn } from "../lib/utils";
+import { sidebarLinks } from "../lib/constants";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
-import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet";
+import { Link, useLocation } from "@tanstack/react-router";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from "../components/ui/sheet";
 
 const MobileNav = () => {
+  const { pathname } = useLocation();
+
   return (
     <div className="shadow-creditCard flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:hidden">
       <Logo />
@@ -17,8 +26,51 @@ const MobileNav = () => {
           className="h-screen w-full max-w-[264px] sm:p-4 lg:hidden xl:p-6"
           side="left"
         >
-          <div className="h-full pt-8">
-            <Sidebar />
+          <div className="flex h-full w-full flex-col justify-between pt-8">
+            <div className="flex flex-col gap-4">
+              <Logo />
+
+              {sidebarLinks.map((item) => {
+                const isActive =
+                  pathname === item.route ||
+                  pathname.startsWith(`${item.route}/`);
+
+                return (
+                  <SheetClose asChild key={item.route}>
+                    <Link
+                      to={item.route}
+                      className={cn(
+                        "flex items-center gap-2 rounded-sm p-3",
+                        isActive && "bg-bank-gradient",
+                      )}
+                    >
+                      <img
+                        className={cn(
+                          "size-6",
+                          isActive && "brightness-[3] invert-0",
+                        )}
+                        src={item.imgURL}
+                        loading="lazy"
+                        alt={item.label}
+                      />
+
+                      <p
+                        className={cn(
+                          "text-[12px] font-medium leading-[18px]",
+                          isActive && "text-white",
+                        )}
+                      >
+                        {item.label}
+                      </p>
+                    </Link>
+                  </SheetClose>
+                );
+              })}
+
+              <div>User</div>
+            </div>
+
+            <div>Footer</div>
           </div>
         </SheetContent>
       </Sheet>

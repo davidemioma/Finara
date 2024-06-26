@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import AnimatedCounter from "./AnimatedCounter";
 import DoughnutChart from "./charts/DoughnutChart";
 
@@ -25,7 +26,11 @@ const TotalBalanceBox = ({
               Bank Accounts: {totalBanks}
             </h2>
 
-            <button>Add bank</button>
+            <Link href="/" className="hidden gap-2 sm:flex">
+              <img src="/icons/plus.svg" width={20} height={20} alt="plus" />
+
+              <h2 className="text-14 font-semibold text-gray-600">Add Bank</h2>
+            </Link>
           </div>
 
           <div className="flex flex-col gap-2">

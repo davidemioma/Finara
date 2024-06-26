@@ -1,7 +1,7 @@
 import Logo from "./Logo";
+import { cn } from "../lib/utils";
 import { sidebarLinks } from "../lib/constants";
 import { Link, useLocation } from "@tanstack/react-router";
-import { cn } from "../lib/utils";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -18,6 +18,7 @@ const Sidebar = () => {
           return (
             <Link
               to={item.route}
+              key={item.route}
               className={cn(
                 "flex items-center gap-2 rounded-sm p-3",
                 isActive && "bg-bank-gradient",

@@ -1,3 +1,4 @@
+import Widget from "../components/Widget";
 import Heading from "../components/Heading";
 import AppLayout from "../components/AppLayout";
 import { createFileRoute } from "@tanstack/react-router";
@@ -23,7 +24,18 @@ export const Route = createFileRoute("/")({
             />
           </div>
 
-          <div>widget</div>
+          <Widget
+            user={{
+              firstName: "David",
+              lastName: "Emioma",
+              email: "davidemiomauche@gmail.com",
+            }}
+            transactions={[]}
+            banks={[
+              { id: "1", name: "DAVID", currentBalance: 1000, mask: 123 },
+              { id: "2", name: "E.DAVID", currentBalance: 2300.9, mask: 456 },
+            ]}
+          />
         </div>
       </AppLayout>
     );

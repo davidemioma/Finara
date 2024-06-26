@@ -12,14 +12,13 @@ export const formatAmount = (
     notation?: Intl.NumberFormatOptions["notation"];
   } = {},
 ) => {
-  const { currency = "USD", notation = "compact" } = options;
+  const { currency = "USD" } = options;
 
   const numericPrice = typeof price === "string" ? parseFloat(price) : price;
 
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
-    notation,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
   }).format(numericPrice);
 };
