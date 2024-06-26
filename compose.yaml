@@ -9,6 +9,6 @@ services:
       - 3000:3000
 
 volumes:
-  react-jwt:
+  bank-transact:
 # docker compose up --build - using docker compose
 # docker compose watch - to watch for changes
