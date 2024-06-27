@@ -3,18 +3,13 @@ import { cn } from "../lib/utils";
 import { sidebarLinks } from "../lib/constants";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Link, useLocation } from "@tanstack/react-router";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from "../components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "./ui/sheet";
 
 const MobileNav = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="shadow-creditCard flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:hidden">
+    <div className="flex h-16 w-full items-center justify-between px-5 shadow-creditCard sm:px-8 lg:hidden">
       <Logo />
 
       <Sheet>

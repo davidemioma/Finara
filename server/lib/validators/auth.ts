@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userRole } from "./server/db/schema";
+import { userRole } from "../../db/schema";
 
 export const RegisterSchema = z.object({
   name: z.string().min(2, { message: "Name is required." }).trim(),

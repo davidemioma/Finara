@@ -5,7 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { verifyUser } from "../lib/middleware";
 import { zValidator } from "@hono/zod-validator";
 import { sendEmailChangeEmail } from "../lib/mail";
-import { SettingsSchema, VerifyTokenSchema } from "../../types";
+import { SettingsSchema, VerifyTokenSchema } from "../lib/validators/auth";
 import { emailChangeVerificationTokens, users } from "../db/schema";
 import { generateEmailChangeVerificationToken } from "../lib/token";
 import { getEmailChangeVerificationTokenByToken } from "../lib/util";

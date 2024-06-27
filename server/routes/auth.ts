@@ -32,7 +32,7 @@ import {
   RegisterSchema,
   ResetSchema,
   VerifyTokenSchema,
-} from "../../types";
+} from "../lib/validators/auth";
 
 export const authRoute = new Hono()
   .post("register", zValidator("json", RegisterSchema), async (c) => {

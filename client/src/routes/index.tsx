@@ -1,6 +1,6 @@
 import Widget from "../components/Widget";
 import Heading from "../components/Heading";
-import AppLayout from "../components/AppLayout";
+import AppLayout from "../components/layouts/AppLayout";
 import { createFileRoute } from "@tanstack/react-router";
 import TotalBalanceBox from "../components/TotalBalanceBox";
 

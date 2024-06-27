@@ -1,13 +1,17 @@
 import { Link } from "@tanstack/react-router";
 
-const Logo = () => {
+type Props = {
+  size?: "sm" | "lg";
+};
+
+const Logo = ({ size = "sm" }: Props) => {
   return (
     <Link to="/">
       <div className="flex items-center gap-2">
         <img
           src="/icons/logo.svg"
-          width={30}
-          height={30}
+          width={size === "sm" ? 30 : 32}
+          height={size === "sm" ? 30 : 32}
           alt="logo"
           loading="lazy"
         />

@@ -1,6 +1,6 @@
 import React from "react";
-import Sidebar from "./Sidebar";
-import MobileNav from "./MobileNav";
+import Sidebar from "../Sidebar";
+import MobileNav from "../MobileNav";
 
 type Props = {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ type Props = {
 
 const AppLayout = ({ children }: Props) => {
   return (
-    <div className="font-inter flex h-screen w-screen">
+    <div className="flex h-screen w-screen font-inter">
       <aside className="sticky inset-y-0 hidden h-screen w-[230px] border-r border-gray-200 bg-white pt-8 sm:p-4 lg:flex xl:w-[264px] xl:p-6">
         <Sidebar />
       </aside>

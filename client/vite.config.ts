@@ -1,7 +1,7 @@
 import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,9 +12,6 @@ export default defineConfig({
       "@components": path.resolve(import.meta.dir, "./src/components"),
       "@server": path.resolve(import.meta.dir, "../server"),
     },
-  },
-  build: {
-    sourcemap: true,
   },
   server: {
     proxy: {
