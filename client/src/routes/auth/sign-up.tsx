@@ -2,8 +2,10 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import StateInput from "@/components/StateInput";
 import CustomInput from "@/components/CustomInput";
 import { useMutation } from "@tanstack/react-query";
+import CountryInput from "@/components/CountryInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { Link, createFileRoute } from "@tanstack/react-router";
@@ -11,8 +13,6 @@ import {
   RegisterSchema,
   RegisterValidator,
 } from "../../../../server/lib/validators/auth";
-import CountryInput from "@/components/CountryInput";
-import StateInput from "@/components/StateInput";
 
 export const Route = createFileRoute("/auth/sign-up")({
   component: () => {
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/auth/sign-up")({
       resolver: zodResolver(RegisterSchema),
       defaultValues: {
         firstName: "",
-        LastName: "",
+        lastName: "",
         address: "",
         city: "",
         country: "",
@@ -54,7 +54,7 @@ export const Route = createFileRoute("/auth/sign-up")({
 
                   <CustomInput
                     control={form.control as any}
-                    name="LastName"
+                    name="lastName"
                     isPending={isPending}
                     label="Last Name"
                     placeholder="Enter your last name"
@@ -109,6 +109,7 @@ export const Route = createFileRoute("/auth/sign-up")({
                     isPending={isPending}
                     label="Date of Birth"
                     placeholder="yyyy-mm-dd"
+                    type="date"
                   />
 
                   <CustomInput

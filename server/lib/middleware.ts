@@ -4,20 +4,28 @@ import { users } from "../db/schema";
 import { createMiddleware } from "hono/factory";
 import { decrypt, getSession, updateAccessToken } from "./session";
 
-type User = {
+export type UserProps = {
   id: number;
-  name: string;
-  image: string | null;
+  firstName: string;
+  lastName: string;
+  address: string;
+  country: string;
+  state: string;
+  city: string;
+  postcode: string;
+  dateOfBirth: string;
+  ssn: string;
   email: string;
-  role: "user" | "admin" | null;
   hashedPassword: string;
   emailVerified: Date | null;
   isTwoFactorEnabled: boolean | null;
+  dwollaCustomerId: string | null;
+  dwollaCustomerUrl: string | null;
 };
 
 type Env = {
   Variables: {
-    user: User;
+    user: UserProps;
   };
 };
 
@@ -42,13 +50,21 @@ export const verifyUser = createMiddleware<Env>(async (c, next) => {
     const user = await db
       .select({
         id: users.id,
-        name: users.name,
-        image: users.image,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        address: users.address,
+        country: users.country,
+        state: users.state,
+        city: users.city,
+        postcode: users.postcode,
+        dateOfBirth: users.dateOfBirth,
+        ssn: users.ssn,
         email: users.email,
-        role: users.role,
         hashedPassword: users.hashedPassword,
         emailVerified: users.emailVerified,
         isTwoFactorEnabled: users.isTwoFactorEnabled,
+        dwollaCustomerId: users.dwollaCustomerId,
+        dwollaCustomerUrl: users.dwollaCustomerUrl,
       })
       .from(users)
       .where(eq(users.id, Number(refreshToken.userId)))

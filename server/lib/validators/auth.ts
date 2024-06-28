@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { userRole } from "../../db/schema";
 
 export const RegisterSchema = z.object({
   firstName: z.string().min(3, { message: "First name is required." }).trim(),
-  LastName: z.string().min(3, { message: "Last name is required." }).trim(),
+  lastName: z.string().min(3, { message: "Last name is required." }).trim(),
   address: z.string().min(3, { message: "Adress is required." }).trim(),
   city: z.string().min(3, { message: "City is required." }).trim(),
   country: z.string().min(3, { message: "Country is required." }).trim(),
@@ -95,9 +94,23 @@ export type NewPasswordValidator = z.infer<typeof NewPasswordSchema>;
 
 export const SettingsSchema = z
   .object({
-    name: z.optional(z.string()),
+    firstName: z.string().min(3, { message: "First name is required." }).trim(),
+    lastName: z.string().min(3, { message: "Last name is required." }).trim(),
+    address: z.string().min(3, { message: "Adress is required." }).trim(),
+    city: z.string().min(3, { message: "City is required." }).trim(),
+    country: z.string().min(3, { message: "Country is required." }).trim(),
+    state: z.string().min(3, { message: "State is required." }).trim(),
+    ssn: z.string().min(3, { message: "SSN is required." }).trim(),
+    postcode: z
+      .string()
+      .min(3, { message: "City is required." })
+      .max(6, { message: "Invalid postcode" })
+      .trim(),
+    dateOfBirth: z
+      .string()
+      .min(3, { message: "Date of Birth is required." })
+      .trim(),
     isTwoFactorEnabled: z.optional(z.boolean()),
-    role: z.enum([...userRole.enumValues]),
     email: z.optional(z.string().email()),
     password: z.optional(
       z

@@ -3,22 +3,28 @@ import {
   serial,
   text,
   timestamp,
-  pgEnum,
   boolean,
   integer,
+  date,
 } from "drizzle-orm/pg-core";
-
-export const userRole = pgEnum("userRole", ["admin", "user"]);
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  image: text("image"),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  address: text("address").notNull(),
+  country: text("country").notNull(),
+  state: text("state").notNull(),
+  city: text("city").notNull(),
+  postcode: text("postcode").notNull(),
+  dateOfBirth: date("date_of_birth").notNull(),
+  ssn: text("ssn").notNull(),
   email: text("email").unique().notNull(),
   emailVerified: timestamp("email_verified"),
   hashedPassword: text("hashed_password").notNull(),
-  role: userRole("userRole").default("user"),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").default(false),
+  dwollaCustomerId: text("dwolla_customer_id").default(""),
+  dwollaCustomerUrl: text("dwolla_customer_url").default(""),
 });
 
 export const verificationTokens = pgTable("verification_tokens", {
@@ -58,4 +64,12 @@ export const twoFactorConfirmations = pgTable("two_factor_confirmations", {
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
+});
+
+export const banks = pgTable("banks", {
+  id: serial("id").primaryKey(),
+});
+
+export const transactions = pgTable("transactions", {
+  id: serial("id").primaryKey(),
 });

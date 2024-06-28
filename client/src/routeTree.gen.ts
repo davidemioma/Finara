@@ -11,15 +11,21 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthSignUpImport } from './routes/auth/sign-up'
 import { Route as AuthSignInImport } from './routes/auth/sign-in'
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
-  path: '/',
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
+  path: '/',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 const AuthSignUpRoute = AuthSignUpImport.update({
@@ -36,11 +42,11 @@ const AuthSignInRoute = AuthSignInImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/auth/sign-in': {
@@ -57,13 +63,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignUpImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexRoute,
+  AuthenticatedRoute: AuthenticatedRoute.addChildren({
+    AuthenticatedIndexRoute,
+  }),
   AuthSignInRoute,
   AuthSignUpRoute,
 })
@@ -76,19 +91,26 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
+        "/_authenticated",
         "/auth/sign-in",
         "/auth/sign-up"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/"
+      ]
     },
     "/auth/sign-in": {
       "filePath": "auth/sign-in.tsx"
     },
     "/auth/sign-up": {
       "filePath": "auth/sign-up.tsx"
+    },
+    "/_authenticated/": {
+      "filePath": "_authenticated/index.tsx",
+      "parent": "/_authenticated"
     }
   }
 }

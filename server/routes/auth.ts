@@ -36,7 +36,7 @@ import {
 
 export const authRoute = new Hono()
   .post("register", zValidator("json", RegisterSchema), async (c) => {
-    const { name, email, password } = await c.req.valid("json");
+    const { email, password, ...rest } = await c.req.valid("json");
 
     //check if user exists
     const user = await db
@@ -54,9 +54,9 @@ export const authRoute = new Hono()
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.insert(users).values({
-      name,
       email,
       hashedPassword,
+      ...rest,
     });
 
     const verificationToken = await generateVerificationToken(email);
@@ -117,10 +117,7 @@ export const authRoute = new Hono()
     const userExists = await db
       .select({
         id: users.id,
-        name: users.name,
-        image: users.image,
         email: users.email,
-        role: users.role,
         hashedPassword: users.hashedPassword,
         emailVerified: users.emailVerified,
         isTwoFactorEnabled: users.isTwoFactorEnabled,

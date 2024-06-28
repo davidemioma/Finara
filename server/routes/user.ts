@@ -5,10 +5,10 @@ import { and, eq } from "drizzle-orm";
 import { verifyUser } from "../lib/middleware";
 import { zValidator } from "@hono/zod-validator";
 import { sendEmailChangeEmail } from "../lib/mail";
-import { SettingsSchema, VerifyTokenSchema } from "../lib/validators/auth";
 import { emailChangeVerificationTokens, users } from "../db/schema";
 import { generateEmailChangeVerificationToken } from "../lib/token";
 import { getEmailChangeVerificationTokenByToken } from "../lib/util";
+import { SettingsSchema, VerifyTokenSchema } from "../lib/validators/auth";
 
 export const userRoute = new Hono()
   .get("/", verifyUser, async (c) => {
@@ -72,8 +72,9 @@ export const userRoute = new Hono()
     async (c) => {
       const user = c.var.user;
 
-      const { name, email, password, newPassword, role, isTwoFactorEnabled } =
-        await c.req.valid("json");
+      const { email, password, newPassword, ...rest } = await c.req.valid(
+        "json"
+      );
 
       //check if user exists
       const userExists = await db
@@ -140,24 +141,9 @@ export const userRoute = new Hono()
       // Update user
       await db
         .update(users)
-        .set({ name, email, hashedPassword, role, isTwoFactorEnabled })
+        .set({ email, hashedPassword, ...rest })
         .where(eq(users.id, user.id));
 
       return c.json({ message: "Settings updated!" }, 200);
     }
-  )
-  .get("admin-only", verifyUser, async (c) => {
-    const user = c.var.user;
-
-    if (user.role !== "admin") {
-      return c.json(
-        {
-          message:
-            "Unauthorized! you don't have the permission to access this.",
-        },
-        401
-      );
-    }
-
-    return c.json({ message: "Hello, Admin" }, 200);
-  });
+  );

@@ -1,10 +1,10 @@
-import Widget from "../components/Widget";
-import Heading from "../components/Heading";
-import AppLayout from "../components/layouts/AppLayout";
+import Widget from "../../components/Widget";
+import Heading from "../../components/Heading";
+import AppLayout from "../../components/layouts/AppLayout";
 import { createFileRoute } from "@tanstack/react-router";
-import TotalBalanceBox from "../components/TotalBalanceBox";
+import TotalBalanceBox from "../../components/TotalBalanceBox";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   component: () => {
     return (
       <AppLayout>
