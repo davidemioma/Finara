@@ -2,7 +2,22 @@ import { z } from "zod";
 import { userRole } from "../../db/schema";
 
 export const RegisterSchema = z.object({
-  name: z.string().min(2, { message: "Name is required." }).trim(),
+  firstName: z.string().min(3, { message: "First name is required." }).trim(),
+  LastName: z.string().min(3, { message: "Last name is required." }).trim(),
+  address: z.string().min(3, { message: "Adress is required." }).trim(),
+  city: z.string().min(3, { message: "City is required." }).trim(),
+  country: z.string().min(3, { message: "Country is required." }).trim(),
+  state: z.string().min(3, { message: "State is required." }).trim(),
+  postcode: z
+    .string()
+    .min(3, { message: "City is required." })
+    .max(6, { message: "Invalid postcode" })
+    .trim(),
+  dateOfBirth: z
+    .string()
+    .min(3, { message: "Date of Birth is required." })
+    .trim(),
+  ssn: z.string().min(3, { message: "SSN is required." }).trim(),
   email: z.string().email({ message: "Invalid email format." }).trim(),
   password: z
     .string()

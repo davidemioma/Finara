@@ -9,9 +9,9 @@ type Props = {
 
 const AuthLayout = ({ children, title, subTitle }: Props) => {
   return (
-    <div className="grid h-screen w-screen lg:grid-cols-2">
-      <div className="flex w-full items-center justify-center px-4 sm:px-6">
-        <div className="flex h-full w-full max-w-[420px] flex-col justify-center gap-5 py-10 md:gap-8">
+    <div className="no-scrollbar relative grid w-full lg:grid-cols-2">
+      <div className="flex min-h-screen w-full items-center justify-center overflow-scroll px-4 py-10 sm:px-6">
+        <div className="flex h-full w-full max-w-[420px] flex-col justify-center gap-5 md:gap-8">
           <Logo size="lg" />
 
           <div className="flex flex-col gap-1 md:gap-3">
@@ -26,7 +26,18 @@ const AuthLayout = ({ children, title, subTitle }: Props) => {
         </div>
       </div>
 
-      <div className="bg-sky-1 w-full max-lg:hidden">Image</div>
+      <div className="sticky top-0 h-screen w-full bg-sky-1 max-lg:hidden">
+        <div className="flex h-full w-full items-center justify-end">
+          <img
+            className="rounded-l-xl object-contain"
+            src="/icons/auth-image.svg"
+            width={500}
+            height={500}
+            loading="lazy"
+            alt="Auth image"
+          />
+        </div>
+      </div>
     </div>
   );
 };
