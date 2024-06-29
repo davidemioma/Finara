@@ -15,6 +15,10 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthSignUpImport } from './routes/auth/sign-up'
 import { Route as AuthSignInImport } from './routes/auth/sign-in'
+import { Route as AuthResetImport } from './routes/auth/reset'
+import { Route as AuthNewVerificationImport } from './routes/auth/new-verification'
+import { Route as AuthNewPasswordImport } from './routes/auth/new-password'
+import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 
 // Create/Update Routes
 
@@ -38,6 +42,26 @@ const AuthSignInRoute = AuthSignInImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthResetRoute = AuthResetImport.update({
+  path: '/auth/reset',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthNewVerificationRoute = AuthNewVerificationImport.update({
+  path: '/auth/new-verification',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthNewPasswordRoute = AuthNewPasswordImport.update({
+  path: '/auth/new-password',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -47,6 +71,34 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/auth/new-password': {
+      id: '/auth/new-password'
+      path: '/auth/new-password'
+      fullPath: '/auth/new-password'
+      preLoaderRoute: typeof AuthNewPasswordImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/new-verification': {
+      id: '/auth/new-verification'
+      path: '/auth/new-verification'
+      fullPath: '/auth/new-verification'
+      preLoaderRoute: typeof AuthNewVerificationImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/reset': {
+      id: '/auth/reset'
+      path: '/auth/reset'
+      fullPath: '/auth/reset'
+      preLoaderRoute: typeof AuthResetImport
       parentRoute: typeof rootRoute
     }
     '/auth/sign-in': {
@@ -77,8 +129,12 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   AuthenticatedRoute: AuthenticatedRoute.addChildren({
+    AuthenticatedSettingsRoute,
     AuthenticatedIndexRoute,
   }),
+  AuthNewPasswordRoute,
+  AuthNewVerificationRoute,
+  AuthResetRoute,
   AuthSignInRoute,
   AuthSignUpRoute,
 })
@@ -92,6 +148,9 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_authenticated",
+        "/auth/new-password",
+        "/auth/new-verification",
+        "/auth/reset",
         "/auth/sign-in",
         "/auth/sign-up"
       ]
@@ -99,8 +158,22 @@ export const routeTree = rootRoute.addChildren({
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/settings",
         "/_authenticated/"
       ]
+    },
+    "/_authenticated/settings": {
+      "filePath": "_authenticated/settings.tsx",
+      "parent": "/_authenticated"
+    },
+    "/auth/new-password": {
+      "filePath": "auth/new-password.tsx"
+    },
+    "/auth/new-verification": {
+      "filePath": "auth/new-verification.tsx"
+    },
+    "/auth/reset": {
+      "filePath": "auth/reset.tsx"
     },
     "/auth/sign-in": {
       "filePath": "auth/sign-in.tsx"

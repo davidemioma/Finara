@@ -3,6 +3,8 @@ import { Control, FieldPath } from "react-hook-form";
 import {
   LoginValidator,
   RegisterValidator,
+  ResetValidator,
+  NewPasswordValidator,
 } from "@/server/lib/validators/auth";
 import {
   FormControl,
@@ -13,8 +15,12 @@ import {
 } from "@/components/ui/form";
 
 type Props = {
-  control: Control<LoginValidator | RegisterValidator>;
-  name: FieldPath<LoginValidator | RegisterValidator>;
+  control: Control<
+    LoginValidator | RegisterValidator | ResetValidator | NewPasswordValidator
+  >;
+  name: FieldPath<
+    LoginValidator | RegisterValidator | ResetValidator | NewPasswordValidator
+  >;
   label: string;
   placeholder: string;
   type?: React.HTMLInputTypeAttribute;

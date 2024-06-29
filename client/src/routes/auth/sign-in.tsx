@@ -1,13 +1,16 @@
+import { toast } from "sonner";
+import { ZodError } from "zod";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/CustomInput";
-import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { api, authUserQueryOptions } from "@/lib/api";
 import AuthLayout from "../../components/layouts/AuthLayout";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   LoginSchema,
   LoginValidator,
@@ -15,6 +18,10 @@ import {
 
 export const Route = createFileRoute("/auth/sign-in")({
   component: () => {
+    const navigate = useNavigate();
+
+    const queryClient = useQueryClient();
+
     const [showTwoFactor, setShowTwoFactor] = useState(false);
 
     const form = useForm<LoginValidator>({
@@ -26,9 +33,48 @@ export const Route = createFileRoute("/auth/sign-in")({
       },
     });
 
-    const { mutate, isPending } = useMutation({});
+    const { mutate, isPending } = useMutation({
+      mutationKey: ["sign-in"],
+      mutationFn: async (values: LoginValidator) => {
+        const res = await api.auth.login.$post({ json: values });
 
-    const onSubmit = (values: LoginValidator) => {};
+        if (!res.ok) {
+          if (res.status === 403) {
+            toast.info("Confirmation email sent!");
+          }
+
+          const data = await res.json();
+
+          throw new Error(data.error || "Something went wrong!");
+        }
+
+        return res;
+      },
+      onSuccess: (res) => {
+        if (res.ok) {
+          if (res.status === 202) {
+            setShowTwoFactor(true);
+          } else {
+            navigate({ to: "/" });
+
+            queryClient.invalidateQueries({
+              queryKey: [authUserQueryOptions.queryKey],
+            });
+          }
+        }
+      },
+      onError: (err) => {
+        if (err instanceof ZodError) {
+          toast.error(err.issues.map((issues) => issues.message).join(" ,"));
+        } else {
+          toast.error(err.message);
+        }
+      },
+    });
+
+    const onSubmit = (values: LoginValidator) => {
+      mutate(values);
+    };
 
     return (
       <AuthLayout
@@ -76,7 +122,7 @@ export const Route = createFileRoute("/auth/sign-in")({
                         variant="link"
                         disabled={isPending}
                       >
-                        <Link to="/">Forgot password?</Link>
+                        <Link to="/auth/reset">Forgot password?</Link>
                       </Button>
                     </>
                   </>
