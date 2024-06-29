@@ -1,6 +1,10 @@
-import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { ZodError } from "zod";
+import { api } from "@/lib/api";
 import { useForm } from "react-hook-form";
+import Spinner from "@/components/Spinner";
 import { Form } from "@/components/ui/form";
+import useCountry from "@/hooks/use-country";
 import { Button } from "@/components/ui/button";
 import StateInput from "@/components/StateInput";
 import CustomInput from "@/components/CustomInput";
@@ -16,6 +20,8 @@ import {
 
 export const Route = createFileRoute("/auth/sign-up")({
   component: () => {
+    const { setCountry } = useCountry();
+
     const form = useForm<RegisterValidator>({
       resolver: zodResolver(RegisterSchema),
       defaultValues: {
@@ -24,7 +30,7 @@ export const Route = createFileRoute("/auth/sign-up")({
         address: "",
         city: "",
         country: "",
-        state: "",
+        state: "bbbb",
         postcode: "",
         dateOfBirth: "",
         ssn: "",
@@ -33,9 +39,42 @@ export const Route = createFileRoute("/auth/sign-up")({
       },
     });
 
-    const { mutate, isPending } = useMutation({});
+    const { mutate, isPending } = useMutation({
+      mutationKey: ["sign-up"],
+      mutationFn: async (values: RegisterValidator) => {
+        const res = await api.auth.register.$post({ json: values });
 
-    const onSubmit = (values: RegisterValidator) => {};
+        if (!res.ok) {
+          const data = await res.json();
+
+          throw new Error(data.error);
+        }
+
+        return res;
+      },
+      onSuccess: async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+
+          toast.success(data.message);
+        }
+
+        setCountry("");
+
+        form.reset();
+      },
+      onError: (err) => {
+        if (err instanceof ZodError) {
+          toast.error(err.issues.map((issues) => issues.message).join(" ,"));
+        } else {
+          toast.error(err.message || "Something went wrong!");
+        }
+      },
+    });
+
+    const onSubmit = (values: RegisterValidator) => {
+      mutate(values);
+    };
 
     return (
       <AuthLayout title="Sign up" subTitle="Please enter your details.">
@@ -76,12 +115,7 @@ export const Route = createFileRoute("/auth/sign-up")({
                     disabled={isPending}
                   />
 
-                  <StateInput
-                    form={form}
-                    label="State"
-                    disabled={isPending}
-                    country={form.getValues("country")}
-                  />
+                  <StateInput form={form} label="State" disabled={isPending} />
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -141,14 +175,7 @@ export const Route = createFileRoute("/auth/sign-up")({
               </div>
 
               <Button className="w-full" type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" /> &nbsp;
-                    Loading...
-                  </>
-                ) : (
-                  "Sign up"
-                )}
+                {isPending ? <Spinner /> : "Sign up"}
               </Button>
             </form>
           </Form>

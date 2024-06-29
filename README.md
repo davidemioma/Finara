@@ -1,4 +1,4 @@
-# BankTransact
+# Finara
 
 To install dependencies:
 

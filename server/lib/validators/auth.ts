@@ -10,7 +10,7 @@ export const RegisterSchema = z.object({
   postcode: z
     .string()
     .min(3, { message: "City is required." })
-    .max(6, { message: "Invalid postcode" })
+    .max(7, { message: "Invalid postcode" })
     .trim(),
   dateOfBirth: z
     .string()

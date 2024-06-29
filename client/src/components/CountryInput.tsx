@@ -1,6 +1,7 @@
 import { Input } from "./ui/input";
 import { CountryProps } from "@/types";
 import { useEffect, useState } from "react";
+import useCountry from "@/hooks/use-country";
 import countries from "../data/countries.json";
 import { UseFormReturn } from "react-hook-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,6 +28,8 @@ type Props = {
 };
 
 const CountryInput = ({ form, label, disabled }: Props) => {
+  const { setCountry } = useCountry();
+
   const [value, setValue] = useState("");
 
   const c = countries as CountryProps[];
@@ -53,7 +56,11 @@ const CountryInput = ({ form, label, disabled }: Props) => {
           </FormLabel>
 
           <Select
-            onValueChange={field.onChange}
+            onValueChange={(value) => {
+              field.onChange(value);
+
+              setCountry(value);
+            }}
             defaultValue={field.value}
             disabled={disabled}
           >
@@ -70,6 +77,7 @@ const CountryInput = ({ form, label, disabled }: Props) => {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 disabled={disabled}
+                autoComplete="new-password"
               />
 
               {countryList.length === 0 ? (
