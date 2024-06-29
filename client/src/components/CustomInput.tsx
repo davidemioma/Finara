@@ -5,6 +5,7 @@ import {
   RegisterValidator,
   ResetValidator,
   NewPasswordValidator,
+  SettingsValidator,
 } from "@/server/lib/validators/auth";
 import {
   FormControl,
@@ -16,10 +17,18 @@ import {
 
 type Props = {
   control: Control<
-    LoginValidator | RegisterValidator | ResetValidator | NewPasswordValidator
+    | LoginValidator
+    | RegisterValidator
+    | ResetValidator
+    | NewPasswordValidator
+    | SettingsValidator
   >;
   name: FieldPath<
-    LoginValidator | RegisterValidator | ResetValidator | NewPasswordValidator
+    | LoginValidator
+    | RegisterValidator
+    | ResetValidator
+    | NewPasswordValidator
+    | SettingsValidator
   >;
   label: string;
   placeholder: string;
@@ -37,6 +46,8 @@ const CustomInput = ({
   isPending,
   offAutoComplete,
 }: Props) => {
+  if (name === "isTwoFactorEnabled") return null;
+
   return (
     <>
       {offAutoComplete ? (

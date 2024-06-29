@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { ZodError } from "zod";
+import Spinner from "@/components/Spinner";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -92,7 +93,7 @@ export const Route = createFileRoute("/auth/new-password")({
             </div>
 
             <Button className="w-full" type="submit" disabled={isPending}>
-              Reset password
+              {isPending ? <Spinner /> : "Reset password"}
             </Button>
           </form>
         </Form>

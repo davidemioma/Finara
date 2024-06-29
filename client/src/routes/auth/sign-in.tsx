@@ -1,9 +1,8 @@
 import { toast } from "sonner";
 import { ZodError } from "zod";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import Spinner from "@/components/Spinner";
 import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/CustomInput";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +14,15 @@ import {
   LoginSchema,
   LoginValidator,
 } from "../../../../server/lib/validators/auth";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/auth/sign-in")({
   component: () => {
@@ -86,18 +94,30 @@ export const Route = createFileRoute("/auth/sign-in")({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-4">
                 {showTwoFactor ? (
-                  <CustomInput
+                  <FormField
                     control={form.control}
                     name="code"
-                    isPending={isPending}
-                    label="Two Factor Code"
-                    placeholder="123456"
-                    offAutoComplete
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Two Factor Code</FormLabel>
+
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            placeholder="123456"
+                            autoComplete="new-password"
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 ) : (
                   <>
                     <CustomInput
-                      control={form.control}
+                      control={form.control as any}
                       name="email"
                       isPending={isPending}
                       label="Email"
@@ -107,7 +127,7 @@ export const Route = createFileRoute("/auth/sign-in")({
 
                     <>
                       <CustomInput
-                        control={form.control}
+                        control={form.control as any}
                         name="password"
                         isPending={isPending}
                         label="Password"
@@ -130,16 +150,7 @@ export const Route = createFileRoute("/auth/sign-in")({
               </div>
 
               <Button className="w-full" type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" /> &nbsp;
-                    Loading...
-                  </>
-                ) : showTwoFactor ? (
-                  "Confirm"
-                ) : (
-                  "Login"
-                )}
+                {isPending ? <Spinner /> : showTwoFactor ? "Confirm" : "Login"}
               </Button>
             </form>
           </Form>

@@ -1,13 +1,14 @@
-import { toast } from "sonner";
 import { ZodError } from "zod";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 import Spinner from "@/components/Spinner";
 import { useCallback, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import AuthLayout from "@/components/layouts/AuthLayout";
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/auth/new-verification")({
+export const Route = createFileRoute("/auth/new-email")({
   component: () => {
     const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/auth/new-verification")({
     const token = params.get("token") || undefined;
 
     const { mutate, isPending } = useMutation({
-      mutationKey: ["verify-email", token],
+      mutationKey: ["change-email", token],
       mutationFn: async () => {
         if (!token) {
           toast.error("Invalid token!");
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/auth/new-verification")({
           return;
         }
 
-        const res = await api.auth["verify-email"].$patch({ json: { token } });
+        const res = await api.user["new-email"].$patch({ json: { token } });
 
         if (!res.ok) {
           const data = await res.json();
@@ -64,8 +65,8 @@ export const Route = createFileRoute("/auth/new-verification")({
 
     return (
       <AuthLayout
-        title="Email Verification"
-        subTitle="Confirming your verification"
+        title="Confirming your verification"
+        subTitle="Enter your new email"
       >
         <div className="mb-3 flex w-full items-center justify-center">
           {isPending && <Spinner />}

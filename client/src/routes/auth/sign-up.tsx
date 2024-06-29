@@ -110,12 +110,16 @@ export const Route = createFileRoute("/auth/sign-up")({
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <CountryInput
-                    form={form}
+                    form={form as any}
                     label="Country"
                     disabled={isPending}
                   />
 
-                  <StateInput form={form} label="State" disabled={isPending} />
+                  <StateInput
+                    form={form as any}
+                    label="State"
+                    disabled={isPending}
+                  />
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">

@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { ZodError } from "zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
+import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/CustomInput";
 import { useMutation } from "@tanstack/react-query";
@@ -70,7 +71,7 @@ export const Route = createFileRoute("/auth/reset")({
             </div>
 
             <Button className="w-full" type="submit" disabled={isPending}>
-              Send reset email
+              {isPending ? <Spinner /> : "Send reset email"}
             </Button>
           </form>
         </Form>

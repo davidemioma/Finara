@@ -125,6 +125,10 @@ export const userRoute = new Hono()
       let hashedPassword = undefined;
 
       if (password && newPassword && userExists.hashedPassword) {
+        if (newPassword === password) {
+          return c.json({ error: "The passwords are the same." }, 409);
+        }
+
         const pwdMatch = await bcrypt.compare(
           password,
           userExists.hashedPassword

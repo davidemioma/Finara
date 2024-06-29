@@ -1,6 +1,5 @@
 import Logo from "./Logo";
 import { cn } from "../lib/utils";
-import { Settings } from "lucide-react";
 import { sidebarLinks } from "../lib/constants";
 import { Link, useLocation } from "@tanstack/react-router";
 import LogoutBtn from "./LogoutBtn";
@@ -44,29 +43,6 @@ const Sidebar = () => {
             </Link>
           );
         })}
-
-        <div>User</div>
-
-        <Link
-          to="/settings"
-          className={cn(
-            "flex items-center gap-2 rounded-sm p-3",
-            pathname === "/settings" ||
-              (pathname.startsWith("/settings/") && "bg-bank-gradient"),
-          )}
-        >
-          <Settings />
-
-          <p
-            className={cn(
-              "text-[12px] font-medium leading-[18px]",
-              pathname === "/settings" ||
-                (pathname.startsWith("/settings/") && "text-white"),
-            )}
-          >
-            Settings
-          </p>
-        </Link>
       </div>
 
       <div>

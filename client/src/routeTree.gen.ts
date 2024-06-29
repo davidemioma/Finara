@@ -18,6 +18,7 @@ import { Route as AuthSignInImport } from './routes/auth/sign-in'
 import { Route as AuthResetImport } from './routes/auth/reset'
 import { Route as AuthNewVerificationImport } from './routes/auth/new-verification'
 import { Route as AuthNewPasswordImport } from './routes/auth/new-password'
+import { Route as AuthNewEmailImport } from './routes/auth/new-email'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 
 // Create/Update Routes
@@ -57,6 +58,11 @@ const AuthNewPasswordRoute = AuthNewPasswordImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthNewEmailRoute = AuthNewEmailImport.update({
+  path: '/auth/new-email',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
@@ -79,6 +85,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
+    }
+    '/auth/new-email': {
+      id: '/auth/new-email'
+      path: '/auth/new-email'
+      fullPath: '/auth/new-email'
+      preLoaderRoute: typeof AuthNewEmailImport
+      parentRoute: typeof rootRoute
     }
     '/auth/new-password': {
       id: '/auth/new-password'
@@ -132,6 +145,7 @@ export const routeTree = rootRoute.addChildren({
     AuthenticatedSettingsRoute,
     AuthenticatedIndexRoute,
   }),
+  AuthNewEmailRoute,
   AuthNewPasswordRoute,
   AuthNewVerificationRoute,
   AuthResetRoute,
@@ -148,6 +162,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_authenticated",
+        "/auth/new-email",
         "/auth/new-password",
         "/auth/new-verification",
         "/auth/reset",
@@ -165,6 +180,9 @@ export const routeTree = rootRoute.addChildren({
     "/_authenticated/settings": {
       "filePath": "_authenticated/settings.tsx",
       "parent": "/_authenticated"
+    },
+    "/auth/new-email": {
+      "filePath": "auth/new-email.tsx"
     },
     "/auth/new-password": {
       "filePath": "auth/new-password.tsx"
