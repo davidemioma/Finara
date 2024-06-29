@@ -239,7 +239,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
                   </div>
                 </div>
 
-                <div className="flex w-full justify-end">
+                <div className="flex w-full justify-end disabled:cursor-not-allowed">
                   <Button disabled={isPending} type="submit">
                     {isPending ? <Spinner /> : "Save"}
                   </Button>
