@@ -68,6 +68,9 @@ export const twoFactorConfirmations = pgTable("two_factor_confirmations", {
 
 export const banks = pgTable("banks", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
 });
 
 export const transactions = pgTable("transactions", {

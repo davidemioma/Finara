@@ -21,3 +21,19 @@ export const authUserQueryOptions = queryOptions({
   },
   staleTime: Infinity, //This means it will stay cached until a user revalidate this path, refreshes the page or login/logout.
 });
+
+export const bankCountQueryOptions = queryOptions({
+  queryKey: ["get-auth-user-bank-count"],
+  queryFn: async () => {
+    const res = await api.user["bank-count"].$get();
+
+    if (!res.ok) {
+      throw new Error("Something went wrong!");
+    }
+
+    const data = await res.json();
+
+    return data.count;
+  },
+  staleTime: Infinity, //This means it will stay cached until a user revalidate this path, refreshes the page or login/logout.
+});

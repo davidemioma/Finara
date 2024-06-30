@@ -1,18 +1,38 @@
 import { db } from "../db";
 import bcrypt from "bcryptjs";
 import { Hono } from "hono";
-import { and, eq } from "drizzle-orm";
+import { plaidClient } from "../lib/plaid";
+import { and, eq, count } from "drizzle-orm";
 import { verifyUser } from "../lib/middleware";
 import { zValidator } from "@hono/zod-validator";
 import { sendEmailChangeEmail } from "../lib/mail";
-import { emailChangeVerificationTokens, users } from "../db/schema";
 import { generateEmailChangeVerificationToken } from "../lib/token";
 import { getEmailChangeVerificationTokenByToken } from "../lib/util";
+import { banks, emailChangeVerificationTokens, users } from "../db/schema";
 import { SettingsSchema, VerifyTokenSchema } from "../lib/validators/auth";
+import {
+  CountryCode,
+  Products,
+  ProcessorTokenCreateRequestProcessorEnum,
+} from "plaid";
+import { exchangeTokenSchema } from "../lib/validators/user";
 
 export const userRoute = new Hono()
   .get("/", verifyUser, async (c) => {
     return c.json({ user: c.var.user });
+  })
+  .get("/bank-count", verifyUser, async (c) => {
+    const user = c.var.user;
+
+    const bankCount = await db
+      .select({
+        count: count(),
+      })
+      .from(banks)
+      .where(eq(banks.userId, user.id))
+      .then((res) => res[0]);
+
+    return c.json({ count: bankCount.count }, 200);
   })
   .patch(
     "new-email",
@@ -149,5 +169,70 @@ export const userRoute = new Hono()
         .where(eq(users.id, user.id));
 
       return c.json({ message: "Settings updated!" }, 200);
+    }
+  )
+  .post("create-link-token", verifyUser, async (c) => {
+    const user = c.var.user;
+
+    const res = await plaidClient.linkTokenCreate({
+      user: {
+        client_user_id: `${user.id}`,
+      },
+      client_name: `${user.firstName} ${user.lastName}`,
+      products: ["auth"] as Products[],
+      language: "en",
+      country_codes: ["US", "UK", "CA"] as CountryCode[],
+    });
+
+    const linkToken = res.data.link_token;
+
+    if (!linkToken) {
+      return c.json({ error: "Could not create token! try again." }, 400);
+    }
+
+    return c.json({ linkToken }, 200);
+  })
+  .post(
+    "exchange-public-token",
+    verifyUser,
+    zValidator("json", exchangeTokenSchema),
+    async (c) => {
+      const user = c.var.user;
+
+      const { publicToken } = await c.req.valid("json");
+
+      // Exchange public token for access token and item ID
+      const response = await plaidClient.itemPublicTokenExchange({
+        public_token: publicToken,
+      });
+
+      const accessToken = response.data.access_token;
+
+      const itemId = response.data.item_id;
+
+      // Get account information from Plaid using the access token
+      const accountsResponse = await plaidClient.accountsGet({
+        access_token: accessToken,
+      });
+
+      const accountData = accountsResponse.data.accounts[0];
+
+      // Create a processor token for Dwolla using the access token and account ID
+      const processorTokenResponse = await plaidClient.processorTokenCreate({
+        access_token: accessToken,
+        account_id: accountData.account_id,
+        processor: "dwolla" as ProcessorTokenCreateRequestProcessorEnum,
+      });
+
+      const processorToken = processorTokenResponse.data.processor_token;
+
+      // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
+      // const fundingSourceUrl = await addFundingSource({
+      //   dwollaCustomerId: user.dwollaCustomerId,
+      //   processorToken,
+      //   bankName: accountData.name,
+      // });
+
+      return c.json({ message: "Bank created!" }, 201);
     }
   );

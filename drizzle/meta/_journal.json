@@ -50,6 +50,13 @@
       "when": 1719602435652,
       "tag": "0006_large_gravity",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1719775608861,
+      "tag": "0007_unknown_excalibur",
+      "breakpoints": true
     }
   ]
 }

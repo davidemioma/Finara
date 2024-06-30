@@ -6,8 +6,8 @@
     "start": "bun server/index.ts",
     "dev": "bun --watch server/index.ts",
     "db:studio": "bunx drizzle-kit studio",
-    "db:generate": "bunx drizzle-kit generate",
-    "db:migrate": "bunx migrate.ts"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun migrate.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -28,6 +28,7 @@
     "i": "^0.3.7",
     "jose": "^5.4.1",
     "nodemailer": "^6.9.14",
+    "plaid": "^25.0.0",
     "postgres": "^3.4.4",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
