@@ -1,11 +1,16 @@
 import Logo from "./Logo";
+import Footer from "./Footer";
 import { cn } from "../lib/utils";
 import { sidebarLinks } from "../lib/constants";
+import { useQuery } from "@tanstack/react-query";
+import { authUserQueryOptions } from "@/lib/api";
+import { UserProps } from "@/server/lib/middleware";
 import { Link, useLocation } from "@tanstack/react-router";
-import LogoutBtn from "./LogoutBtn";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
+
+  const { data: user, isLoading, isError } = useQuery(authUserQueryOptions);
 
   return (
     <div className="flex h-full w-full flex-col justify-between">
@@ -45,9 +50,7 @@ const Sidebar = () => {
         })}
       </div>
 
-      <div>
-        <LogoutBtn>Logout</LogoutBtn>
-      </div>
+      {!isLoading && !isError && user && <Footer user={user as UserProps} />}
     </div>
   );
 };

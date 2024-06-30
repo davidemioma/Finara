@@ -1,7 +1,3 @@
-// Then run: bun migrate.ts
-
-// To access studio: bunx drizzle-kit studio
-
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";

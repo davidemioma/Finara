@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "start": "bun server/index.ts",
-    "dev": "bun --watch server/index.ts"
+    "dev": "bun --watch server/index.ts",
+    "db:studio": "bunx drizzle-kit studio",
+    "db:generate": "bunx drizzle-kit generate",
+    "db:migrate": "bunx migrate.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"

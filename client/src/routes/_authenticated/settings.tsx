@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import Heading from "@/components/Heading";
 import Spinner from "@/components/Spinner";
+import ErrorCard from "@/components/ErrorCard";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/CustomInput";
@@ -39,11 +40,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
     }
 
     if (error) {
-      return (
-        <div className="flex w-full items-center justify-center p-4">
-          <p>Something went wrong!</p>
-        </div>
-      );
+      return <ErrorCard message="Could not get user details." />;
     }
 
     const form = useForm<SettingsValidator>({

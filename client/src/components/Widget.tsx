@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
 import BankCard from "./BankCard";
+import { Link } from "@tanstack/react-router";
 
 type Props = {
   user: {
@@ -15,10 +15,10 @@ const Widget = ({ user, transactions, banks }: Props) => {
   return (
     <aside className="no-scrollbar hidden h-screen w-[360px] overflow-y-scroll border-l border-gray-200 xl:flex xl:flex-col">
       <div className="flex flex-col pb-8">
-        <div className="bg-gradient-mesh h-[120px] w-full bg-cover bg-no-repeat" />
+        <div className="h-[120px] w-full bg-gradient-mesh bg-cover bg-no-repeat" />
 
         <div className="relative px-6">
-          <div className="shadow-profile absolute -top-8 flex h-[96px] w-[96px] items-center justify-center rounded-full border-8 border-white bg-gray-100 p-2">
+          <div className="absolute -top-8 flex h-[96px] w-[96px] items-center justify-center rounded-full border-8 border-white bg-gray-100 p-2 shadow-profile">
             <span className="text-5xl font-bold text-blue-500">
               {user?.firstName[0]}
             </span>

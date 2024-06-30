@@ -1,14 +1,15 @@
 import { toast } from "sonner";
 import { api } from "@/lib/api";
-import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-type Props = {
-  children?: React.ReactNode;
-};
-
-const LogoutBtn = ({ children }: Props) => {
+const LogoutBtn = () => {
   const navigate = useNavigate();
 
   const { mutate, isPending } = useMutation({
@@ -29,13 +30,17 @@ const LogoutBtn = ({ children }: Props) => {
   });
 
   return (
-    <Button
-      onClick={() => mutate()}
-      className="w-full cursor-pointer"
-      disabled={isPending}
-    >
-      {children}
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger onClick={() => mutate()} disabled={isPending}>
+          <img src="icons/logout.svg" alt="logout-icon" loading="lazy" />
+        </TooltipTrigger>
+
+        <TooltipContent className="bg-[#000000]/70 text-white">
+          <p>Sign out</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
