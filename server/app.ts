@@ -3,6 +3,7 @@ import { logger } from "hono/logger";
 import { serveStatic } from "hono/bun";
 import { authRoute } from "./routes/auth";
 import { userRoute } from "./routes/user";
+import { bankRoute } from "./routes/bank";
 
 const app = new Hono();
 
@@ -11,7 +12,8 @@ app.use("*", logger());
 const apiRoutes = app
   .basePath("/api")
   .route("/auth", authRoute)
-  .route("/user", userRoute);
+  .route("/user", userRoute)
+  .route("/bank", bankRoute);
 
 // Frontend. it's displays the client code if no API endpoint.
 app.get("*", serveStatic({ root: "./client/dist" }));

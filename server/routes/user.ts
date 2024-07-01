@@ -4,8 +4,10 @@ import { Hono } from "hono";
 import { plaidClient } from "../lib/plaid";
 import { and, eq, count } from "drizzle-orm";
 import { verifyUser } from "../lib/middleware";
+import { addFundingSource } from "../lib/dwolla";
 import { zValidator } from "@hono/zod-validator";
 import { sendEmailChangeEmail } from "../lib/mail";
+import { exchangeTokenSchema } from "../lib/validators/user";
 import { generateEmailChangeVerificationToken } from "../lib/token";
 import { getEmailChangeVerificationTokenByToken } from "../lib/util";
 import { banks, emailChangeVerificationTokens, users } from "../db/schema";
@@ -15,8 +17,6 @@ import {
   Products,
   ProcessorTokenCreateRequestProcessorEnum,
 } from "plaid";
-import { exchangeTokenSchema } from "../lib/validators/user";
-import { addFundingSource } from "../lib/dwolla";
 
 export const userRoute = new Hono()
   .get("/", verifyUser, async (c) => {
@@ -182,7 +182,7 @@ export const userRoute = new Hono()
       client_name: `${user.firstName} ${user.lastName}`,
       products: ["auth"] as Products[],
       language: "en",
-      country_codes: ["US"] as CountryCode[],
+      country_codes: ["US"] as CountryCode[], //We use US because sanbox mode only works for US.
     });
 
     const linkToken = res.data.link_token;
