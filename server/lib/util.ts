@@ -110,3 +110,11 @@ export const getEmailChangeVerificationTokenByToken = async (token: string) => {
 
   return verficationToken;
 };
+
+export const extractCustomerIdFromUrl = (url: string) => {
+  const parts = url.split("/");
+
+  const customerId = parts[parts.length - 1];
+
+  return customerId;
+};

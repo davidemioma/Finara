@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
+import { createDwollaCustomer } from "../lib/dwolla";
 import { createSession, destroySession } from "../lib/session";
 import {
   sendPasswordResetEmail,
@@ -10,6 +11,7 @@ import {
   sendVerificationEmail,
 } from "../lib/mail";
 import {
+  extractCustomerIdFromUrl,
   getPasswordResetTokenByToken,
   getTwoFactorTokenByEmail,
   getVerificationTokenByToken,
@@ -97,10 +99,13 @@ export const authRoute = new Hono()
       return c.json({ error: "User not found" }, 404);
     }
 
-    // Verify email
+    // Verify User
     await db
       .update(users)
-      .set({ emailVerified: new Date(), email: tokenExists.email })
+      .set({
+        emailVerified: new Date(),
+        email: tokenExists.email,
+      })
       .where(eq(users.id, userExists.id));
 
     // Delete token
@@ -117,10 +122,21 @@ export const authRoute = new Hono()
     const userExists = await db
       .select({
         id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
         email: users.email,
+        address: users.address,
+        city: users.city,
+        country: users.country,
+        state: users.state,
+        postcode: users.postcode,
+        dateOfBirth: users.dateOfBirth,
+        ssn: users.ssn,
         hashedPassword: users.hashedPassword,
         emailVerified: users.emailVerified,
         isTwoFactorEnabled: users.isTwoFactorEnabled,
+        dwollaCustomerId: users.dwollaCustomerId,
+        dwollaCustomerUrl: users.dwollaCustomerUrl,
       })
       .from(users)
       .where(eq(users.email, email))
@@ -202,6 +218,44 @@ export const authRoute = new Hono()
 
     if (!pwdMatch) {
       return c.json({ error: "Wrong password! Try aagain." }, 401);
+    }
+
+    //Dwolla
+    if (
+      !userExists.dwollaCustomerId?.trim() ||
+      !userExists.dwollaCustomerUrl?.trim()
+    ) {
+      const { id: _, address, state, postcode, ...rest } = userExists;
+
+      // Verify email and set dwolla customer Id and url
+      const dwollaCustomerUrl = await createDwollaCustomer({
+        ...rest,
+        address1: address,
+        state: "NY", //For sandbox mode because it only allows usa states and 2 digit code.
+        postalCode: "12345", //For sandbox mode because it only allows usa postal codes.
+        type: "personal",
+      });
+
+      if (!dwollaCustomerUrl) {
+        return c.json(
+          {
+            error:
+              "Could not verify email address! Error creating dwolla customer",
+          },
+          400
+        );
+      }
+
+      const dwollaCustomerId = extractCustomerIdFromUrl(dwollaCustomerUrl);
+
+      // Udate User
+      await db
+        .update(users)
+        .set({
+          dwollaCustomerUrl,
+          dwollaCustomerId,
+        })
+        .where(eq(users.id, userExists.id));
     }
 
     await createSession({

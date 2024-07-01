@@ -57,6 +57,13 @@
       "when": 1719775608861,
       "tag": "0007_unknown_excalibur",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1719850916609,
+      "tag": "0008_broken_havok",
+      "breakpoints": true
     }
   ]
 }

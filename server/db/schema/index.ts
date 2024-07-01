@@ -62,15 +62,20 @@ export const twoFactorTokens = pgTable("two_factor_tokens", {
 export const twoFactorConfirmations = pgTable("two_factor_confirmations", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
 });
 
 export const banks = pgTable("banks", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
+  bankId: text("bank_id").unique().notNull(),
+  accountId: text("account_id").unique().notNull(),
+  accessToken: text("access_token").unique().notNull(),
+  fundingSourceUrl: text("funding_source_url").unique().notNull(),
+  shareableId: text("shareable_id").unique().notNull(),
 });
 
 export const transactions = pgTable("transactions", {

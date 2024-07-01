@@ -16,6 +16,7 @@ import {
   ProcessorTokenCreateRequestProcessorEnum,
 } from "plaid";
 import { exchangeTokenSchema } from "../lib/validators/user";
+import { addFundingSource } from "../lib/dwolla";
 
 export const userRoute = new Hono()
   .get("/", verifyUser, async (c) => {
@@ -181,7 +182,7 @@ export const userRoute = new Hono()
       client_name: `${user.firstName} ${user.lastName}`,
       products: ["auth"] as Products[],
       language: "en",
-      country_codes: ["US", "UK", "CA"] as CountryCode[],
+      country_codes: ["US"] as CountryCode[],
     });
 
     const linkToken = res.data.link_token;
@@ -227,11 +228,21 @@ export const userRoute = new Hono()
       const processorToken = processorTokenResponse.data.processor_token;
 
       // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
-      // const fundingSourceUrl = await addFundingSource({
-      //   dwollaCustomerId: user.dwollaCustomerId,
-      //   processorToken,
-      //   bankName: accountData.name,
-      // });
+      const fundingSourceUrl = await addFundingSource({
+        dwollaCustomerId: user.dwollaCustomerId || "",
+        processorToken,
+        bankName: accountData.name,
+      });
+
+      // Create a bank account in db
+      await db.insert(banks).values({
+        userId: user.id,
+        bankId: itemId,
+        accountId: accountData.account_id,
+        accessToken,
+        fundingSourceUrl: fundingSourceUrl || "",
+        shareableId: btoa(accountData.account_id),
+      });
 
       return c.json({ message: "Bank created!" }, 201);
     }

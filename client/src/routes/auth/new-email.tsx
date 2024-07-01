@@ -21,11 +21,7 @@ export const Route = createFileRoute("/auth/new-email")({
     const { mutate, isPending } = useMutation({
       mutationKey: ["change-email", token],
       mutationFn: async () => {
-        if (!token) {
-          toast.error("Invalid token!");
-
-          return;
-        }
+        if (!token) return;
 
         const res = await api.user["new-email"].$patch({ json: { token } });
 

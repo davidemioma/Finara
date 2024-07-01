@@ -20,11 +20,7 @@ export const Route = createFileRoute("/auth/new-verification")({
     const { mutate, isPending } = useMutation({
       mutationKey: ["verify-email", token],
       mutationFn: async () => {
-        if (!token) {
-          toast.error("Invalid token!");
-
-          return;
-        }
+        if (!token) return;
 
         const res = await api.auth["verify-email"].$patch({ json: { token } });
 
