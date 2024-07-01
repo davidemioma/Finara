@@ -1,9 +1,10 @@
+import { AccountProps } from "@/types";
 import { Link } from "@tanstack/react-router";
 import AnimatedCounter from "./AnimatedCounter";
 import DoughnutChart from "./charts/DoughnutChart";
 
 type Props = {
-  accounts: [];
+  accounts: AccountProps[];
   totalBanks: number;
   totalCurrentBalance: number;
 };
@@ -14,7 +15,7 @@ const TotalBalanceBox = ({
   totalCurrentBalance,
 }: Props) => {
   return (
-    <section className="shadow-chart w-full rounded-xl border border-gray-200 p-4 sm:p-6">
+    <section className="w-full rounded-xl border border-gray-200 p-4 shadow-chart sm:p-6">
       <div className="flex items-center gap-4 sm:gap-6">
         <div className="flex size-full max-w-[100px] items-center sm:max-w-[120px]">
           <DoughnutChart accounts={accounts} />
@@ -39,7 +40,7 @@ const TotalBalanceBox = ({
             </p>
 
             <div className="text-[30px] font-semibold leading-[38px]">
-              <AnimatedCounter amount={totalCurrentBalance} prefix="£" />
+              <AnimatedCounter amount={totalCurrentBalance} prefix="$" />
             </div>
           </div>
         </div>

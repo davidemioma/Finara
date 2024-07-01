@@ -1,4 +1,5 @@
 import BankCard from "./BankCard";
+import { AccountProps, TransactionProps } from "@/types";
 import { Link } from "@tanstack/react-router";
 
 type Props = {
@@ -7,8 +8,8 @@ type Props = {
     lastName: string;
     email: string;
   } | null;
-  transactions: [];
-  banks: { id: string; name: string; currentBalance: number; mask: number }[];
+  transactions: TransactionProps[];
+  banks: AccountProps[];
 };
 
 const Widget = ({ user, transactions, banks }: Props) => {

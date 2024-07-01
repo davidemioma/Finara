@@ -46,14 +46,27 @@ export type StateProps = {
 
 export type AccountProps = {
   id: string;
-  availableBalance: number;
-  currentBalance: number;
-  officialName: string;
-  mask: string;
-  institutionId: string;
+  dbBankId: number;
   name: string;
   type: string;
+  availableBalance: number;
+  currentBalance: number;
+  officialName: string | null;
+  mask: string;
+  institutionId: string | undefined;
   subtype: string;
-  appwriteItemId: string;
-  shareableId: string;
+  sharaebleId: string;
+};
+
+export type TransactionProps = {
+  id: string;
+  name: string;
+  paymentChannel: string;
+  type: string;
+  accountId: string;
+  amount: number;
+  pending: boolean;
+  category: string;
+  date: string;
+  image: string;
 };

@@ -1,14 +1,42 @@
 import Widget from "../../components/Widget";
 import Heading from "../../components/Heading";
 import { useQuery } from "@tanstack/react-query";
-import { authUserQueryOptions } from "@/lib/api";
 import AppLayout from "../../components/layouts/AppLayout";
 import { createFileRoute } from "@tanstack/react-router";
 import TotalBalanceBox from "../../components/TotalBalanceBox";
+import TotalBoxSkeleton from "@/components/skeletons/TotalBoxSkeleton";
+import { authUserQueryOptions, accountsQueryOptions, api } from "@/lib/api";
 
 export const Route = createFileRoute("/_authenticated/")({
   component: () => {
     const { data: user, isLoading, isError } = useQuery(authUserQueryOptions);
+
+    const {
+      data,
+      isLoading: accsLoading,
+      isError: accsErr,
+    } = useQuery(accountsQueryOptions);
+
+    const { data: accountData } = useQuery({
+      queryKey: ["get-first-account", data?.accounts?.[0].id],
+      queryFn: async () => {
+        const bankId = data?.accounts?.[0].id;
+
+        if (!bankId) return;
+
+        const res = await api.bank.account[":bankId"].$get({
+          param: {
+            bankId,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Something went wrong");
+        }
+
+        return res.json();
+      },
+    });
 
     return (
       <AppLayout>
@@ -21,25 +49,26 @@ export const Route = createFileRoute("/_authenticated/")({
               subtitle="Access and manage your account and transactions efficiently."
             />
 
-            <TotalBalanceBox
-              accounts={[]}
-              totalBanks={1}
-              totalCurrentBalance={2600}
-            />
+            {!accsLoading && !accsErr && data ? (
+              <TotalBalanceBox
+                accounts={data?.accounts}
+                totalBanks={data?.totalBanks}
+                totalCurrentBalance={data?.totalCurrentBalance}
+              />
+            ) : (
+              accsLoading && <TotalBoxSkeleton />
+            )}
           </div>
 
-          {!isLoading && !isError && user && (
+          {!isLoading && !isError && user && data && accountData && (
             <Widget
               user={{
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
               }}
-              transactions={[]}
-              banks={[
-                { id: "1", name: "DAVID", currentBalance: 1000, mask: 123 },
-                { id: "2", name: "E.DAVID", currentBalance: 2300.9, mask: 456 },
-              ]}
+              transactions={accountData?.transactions || []}
+              banks={data.accounts.slice(0, 2)}
             />
           )}
         </div>

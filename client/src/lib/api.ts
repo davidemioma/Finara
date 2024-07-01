@@ -37,3 +37,19 @@ export const bankCountQueryOptions = queryOptions({
   },
   staleTime: Infinity, //This means it will stay cached until a user revalidate this path, refreshes the page or login/logout.
 });
+
+export const accountsQueryOptions = queryOptions({
+  queryKey: ["get-accounts"],
+  queryFn: async () => {
+    const res = await api.bank.accounts.$get();
+
+    if (!res.ok) {
+      throw new Error("Something went wrong!");
+    }
+
+    const data = await res.json();
+
+    return data;
+  },
+  staleTime: Infinity, //This means it will stay cached until a user revalidate this path, refreshes the page or login/logout.
+});

@@ -3,9 +3,9 @@ import { Button } from "./ui/button";
 import AuthLayout from "./layouts/AuthLayout";
 import { UserProps } from "@/server/lib/middleware";
 import { useNavigate } from "@tanstack/react-router";
-import { api, bankCountQueryOptions } from "@/lib/api";
 import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { accountsQueryOptions, api, bankCountQueryOptions } from "@/lib/api";
 import {
   PlaidLinkOnSuccess,
   PlaidLinkOptions,
@@ -61,6 +61,14 @@ const PlaidLink = ({ user, variant }: Props) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [bankCountQueryOptions.queryKey],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [accountsQueryOptions.queryKey],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["get-first-account"],
       });
 
       navigate({ to: "/" });

@@ -1,9 +1,10 @@
+import { AccountProps } from "@/types";
 import { Link } from "@tanstack/react-router";
 import { formatAmount } from "../lib/utils";
 
 type Props = {
   username: string;
-  account: { id: string; name: string; currentBalance: number; mask: number };
+  account: AccountProps;
   showBalance?: boolean;
 };
 
@@ -11,8 +12,8 @@ const BankCard = ({ username, account, showBalance = true }: Props) => {
   return (
     <div className="w-full">
       <Link to={`/`}>
-        <div className="bg-bank-gradient shadow-creditCard flex h-[190px] w-full justify-between rounded-[20px] border border-white backdrop-blur-[6px]">
-          <div className="bg-bank-gradient flex h-full w-full flex-1 flex-col justify-between rounded-l-[20px] bg-gray-700 px-5 pb-4 pt-5">
+        <div className="flex h-[190px] w-full justify-between rounded-[20px] border border-white bg-bank-gradient shadow-creditCard backdrop-blur-[6px]">
+          <div className="flex h-full w-full flex-1 flex-col justify-between rounded-l-[20px] bg-gray-700 bg-bank-gradient px-5 pb-4 pt-5">
             <div>
               <h1 className="text-[16px] font-semibold leading-5 text-white">
                 {account.name}
@@ -43,7 +44,7 @@ const BankCard = ({ username, account, showBalance = true }: Props) => {
             </article>
           </div>
 
-          <div className="bg-bank-gradient flex flex-col items-end justify-between rounded-r-[20px] bg-cover bg-center bg-no-repeat py-5 pr-5">
+          <div className="flex flex-col items-end justify-between rounded-r-[20px] bg-bank-gradient bg-cover bg-center bg-no-repeat py-5 pr-5">
             <img
               src="/icons/Paypass.svg"
               loading="lazy"
