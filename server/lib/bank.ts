@@ -34,13 +34,13 @@ export const getBank = async ({
   bankId,
 }: {
   userId: number;
-  bankId: string;
+  bankId: number;
 }) => {
   try {
     const bank = await db
       .select()
       .from(banks)
-      .where(and(eq(banks.userId, userId), eq(banks.bankId, bankId)))
+      .where(and(eq(banks.userId, userId), eq(banks.id, bankId)))
       .then((res) => res[0]);
 
     return bank;
@@ -91,6 +91,41 @@ export const getInstitution = async ({
     console.error("An error occurred while getting the institution:", error);
 
     return null;
+  }
+};
+
+export const getFewTransactions = async ({
+  accessToken,
+}: {
+  accessToken: string;
+}) => {
+  try {
+    const response = await plaidClient.transactionsSync({
+      access_token: accessToken,
+      count: 5,
+    });
+
+    const transactions: any[] = response.data.added.map((transaction) => ({
+      id: transaction.transaction_id,
+      name: transaction.name,
+      paymentChannel: transaction.payment_channel,
+      type: transaction.payment_channel,
+      accountId: transaction.account_id,
+      amount: transaction.amount,
+      pending: transaction.pending,
+      category: transaction.category ? transaction.category[0] : "",
+      date: transaction.date,
+      image: transaction.logo_url,
+    }));
+
+    return transactions;
+  } catch (error) {
+    console.error(
+      "An error occurred while getting the account few transactions:",
+      error
+    );
+
+    return [];
   }
 };
 

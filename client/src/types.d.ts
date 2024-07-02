@@ -70,3 +70,10 @@ export type TransactionProps = {
   date: string;
   image: string;
 };
+
+export type AccountTypes =
+  | "depository"
+  | "credit"
+  | "loan "
+  | "investment"
+  | "other";

@@ -7,7 +7,7 @@ import {
   type BankProps,
   getInstitution,
   getBank,
-  getTransactions,
+  getFewTransactions,
 } from "../lib/bank";
 
 export const bankRoute = new Hono()
@@ -63,7 +63,7 @@ export const bankRoute = new Hono()
     const { bankId } = c.req.param();
 
     // get bank from db
-    const bank = await getBank({ userId: user.id, bankId });
+    const bank = await getBank({ userId: user.id, bankId: Number(bankId) });
 
     if (!bank) {
       return c.json({ error: "Bank not found" }, 404);
@@ -91,7 +91,7 @@ export const bankRoute = new Hono()
       return c.json({ error: "Something went wrong" }, 400);
     }
 
-    const transactions = await getTransactions({
+    const transactions = await getFewTransactions({
       accessToken: bank?.accessToken,
     });
 
