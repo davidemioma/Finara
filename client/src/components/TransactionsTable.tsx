@@ -100,15 +100,15 @@ const TransactionsTable = ({ transactions }: Props) => {
                 <CategoryBadge category={status} />
               </TableCell>
 
-              <TableCell>
+              <TableCell className="text-xs">
                 {format(new Date(transaction.date), "eee, MMMM d, HH:mm a")}
               </TableCell>
 
-              <TableCell className="min-w-24 pl-2 pr-10 capitalize max-md:hidden">
+              <TableCell className="min-w-24 pl-2 pr-10 text-xs capitalize max-md:hidden">
                 {transaction.paymentChannel}
               </TableCell>
 
-              <TableCell className="pl-2 pr-10 max-md:hidden">
+              <TableCell className="pl-2 pr-10 text-xs max-md:hidden">
                 <CategoryBadge category={transaction.category} />
               </TableCell>
             </TableRow>

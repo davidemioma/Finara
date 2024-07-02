@@ -234,6 +234,13 @@ export const userRoute = new Hono()
         bankName: accountData.name,
       });
 
+      if (!fundingSourceUrl) {
+        return c.json(
+          { error: "Could not create bank! try connecting a different bank." },
+          400
+        );
+      }
+
       // Create a bank account in db
       await db.insert(banks).values({
         userId: user.id,

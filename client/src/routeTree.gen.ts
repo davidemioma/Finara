@@ -19,6 +19,7 @@ import { Route as AuthResetImport } from './routes/auth/reset'
 import { Route as AuthNewVerificationImport } from './routes/auth/new-verification'
 import { Route as AuthNewPasswordImport } from './routes/auth/new-password'
 import { Route as AuthNewEmailImport } from './routes/auth/new-email'
+import { Route as AuthenticatedTransactionHistoryImport } from './routes/_authenticated/transaction-history'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 
 // Create/Update Routes
@@ -63,6 +64,12 @@ const AuthNewEmailRoute = AuthNewEmailImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedTransactionHistoryRoute =
+  AuthenticatedTransactionHistoryImport.update({
+    path: '/transaction-history',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
 const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
@@ -84,6 +91,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/transaction-history': {
+      id: '/_authenticated/transaction-history'
+      path: '/transaction-history'
+      fullPath: '/transaction-history'
+      preLoaderRoute: typeof AuthenticatedTransactionHistoryImport
       parentRoute: typeof AuthenticatedImport
     }
     '/auth/new-email': {
@@ -143,6 +157,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   AuthenticatedRoute: AuthenticatedRoute.addChildren({
     AuthenticatedSettingsRoute,
+    AuthenticatedTransactionHistoryRoute,
     AuthenticatedIndexRoute,
   }),
   AuthNewEmailRoute,
@@ -174,11 +189,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "_authenticated.tsx",
       "children": [
         "/_authenticated/settings",
+        "/_authenticated/transaction-history",
         "/_authenticated/"
       ]
     },
     "/_authenticated/settings": {
       "filePath": "_authenticated/settings.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/transaction-history": {
+      "filePath": "_authenticated/transaction-history.tsx",
       "parent": "/_authenticated"
     },
     "/auth/new-email": {

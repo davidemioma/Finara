@@ -1,6 +1,7 @@
 import Logo from "./Logo";
 import Footer from "./Footer";
 import { cn } from "../lib/utils";
+import PlaidLink from "./PlaidLink";
 import { sidebarLinks } from "../lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { authUserQueryOptions } from "@/lib/api";
@@ -67,6 +68,8 @@ const MobileNav = () => {
                   </SheetClose>
                 );
               })}
+
+              {user && <PlaidLink user={user as UserProps} />}
             </div>
 
             {!isLoading && !isError && user && (

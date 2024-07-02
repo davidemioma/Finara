@@ -1,10 +1,8 @@
 import { toast } from "sonner";
+import { useCallback } from "react";
 import { Button } from "./ui/button";
-import AuthLayout from "./layouts/AuthLayout";
 import { UserProps } from "@/server/lib/middleware";
-import { useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { accountsQueryOptions, api, bankCountQueryOptions } from "@/lib/api";
 import {
   PlaidLinkOnSuccess,
@@ -14,19 +12,15 @@ import {
 
 type Props = {
   user: UserProps;
-  variant: string;
+  variant?: "primary" | "ghost";
 };
 
 const PlaidLink = ({ user, variant }: Props) => {
-  const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
-  const [token, setToken] = useState("");
-
-  const { mutate: getLinkToken, isPending: isLoading } = useMutation({
-    mutationKey: ["get-plaid-link-token", user.id],
-    mutationFn: async () => {
+  const { data: token, isPending: isLoading } = useQuery({
+    queryKey: ["get-plaid-link-token", user.id],
+    queryFn: async () => {
       const res = await api.user["create-link-token"].$post();
 
       if (!res.ok) {
@@ -41,17 +35,8 @@ const PlaidLink = ({ user, variant }: Props) => {
 
       return data.linkToken;
     },
-    onSuccess: (data) => {
-      setToken(data);
-    },
-    onError: (err) => {
-      toast.error(err.message || "Something went wrong");
-    },
+    staleTime: Infinity,
   });
-
-  useEffect(() => {
-    getLinkToken();
-  }, [user]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["exchange-public-token", user.id],
@@ -59,19 +44,13 @@ const PlaidLink = ({ user, variant }: Props) => {
       await api.user["exchange-public-token"].$post({ json: { publicToken } });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [bankCountQueryOptions.queryKey],
+      queryClient.refetchQueries({
+        queryKey: [
+          bankCountQueryOptions.queryKey,
+          accountsQueryOptions.queryKey,
+          "get-first-account",
+        ],
       });
-
-      queryClient.invalidateQueries({
-        queryKey: [accountsQueryOptions.queryKey],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["get-first-account"],
-      });
-
-      navigate({ to: "/" });
     },
     onError: (err) => {
       toast.error(err.message || "Something went wrong");
@@ -93,10 +72,7 @@ const PlaidLink = ({ user, variant }: Props) => {
   const { open, ready } = usePlaidLink(config);
 
   return (
-    <AuthLayout
-      title={`Welcome, ${user.firstName}`}
-      subTitle="Connect your bank account"
-    >
+    <>
       {variant === "primary" ? (
         <Button
           className="rounded-lg border border-bankGradient bg-bank-gradient text-[16px] font-semibold leading-5 text-white shadow-form"
@@ -109,6 +85,7 @@ const PlaidLink = ({ user, variant }: Props) => {
         <Button
           variant="ghost"
           className="flex items-center justify-center gap-3 rounded-lg px-3 py-7 hover:bg-white lg:justify-start"
+          onClick={() => open()}
           disabled={isLoading || isPending}
         >
           <img
@@ -125,8 +102,9 @@ const PlaidLink = ({ user, variant }: Props) => {
         </Button>
       ) : (
         <Button
-          variant="secondary"
-          className="flex justify-start gap-3 rounded-lg"
+          variant="ghost"
+          className="flex justify-start gap-3 rounded-lg px-2"
+          onClick={() => open()}
           disabled={isLoading || isPending}
         >
           <img
@@ -137,12 +115,12 @@ const PlaidLink = ({ user, variant }: Props) => {
             alt="connect bank"
           />
 
-          <p className="text-[16px] font-semibold leading-5 text-black-2 xl:block">
+          <p className="text-[12px] font-semibold leading-5 text-black-2 xl:block">
             Connect bank
           </p>
         </Button>
       )}
-    </AuthLayout>
+    </>
   );
 };
 

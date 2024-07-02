@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import { LogOut } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -33,10 +34,10 @@ const LogoutBtn = () => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger onClick={() => mutate()} disabled={isPending}>
-          <img src="icons/logout.svg" alt="logout-icon" loading="lazy" />
+          <LogOut className="h-5 w-5" />
         </TooltipTrigger>
 
-        <TooltipContent className="bg-[#000000]/70 text-white">
+        <TooltipContent className="bg-[#000000]/70 text-white max-lg:hidden">
           <p>Sign out</p>
         </TooltipContent>
       </Tooltip>

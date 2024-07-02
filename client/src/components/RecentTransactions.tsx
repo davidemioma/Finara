@@ -20,7 +20,7 @@ const RecentTransactions = ({ accounts, transactions, bankId }: Props) => {
         </h1>
 
         <Link
-          href={`/transaction-history/?id=${bankId}`}
+          to={`/transaction-history/?id=${bankId}`}
           className="rounded-lg border border-gray-300 px-4 py-2.5 text-[14px] font-semibold leading-5 text-gray-700"
         >
           View all

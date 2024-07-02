@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/")({
       isError: accsErr,
     } = useQuery(accountsQueryOptions);
 
-    const bankId = id || `${data?.accounts?.[0].dbBankId}`;
+    const bankId = id ? id : `${data?.accounts?.[0].dbBankId}`;
 
     const { data: accountData, isLoading: accLoading } = useQuery({
       queryKey: ["get-first-account", bankId],

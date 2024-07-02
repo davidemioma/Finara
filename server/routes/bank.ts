@@ -62,6 +62,10 @@ export const bankRoute = new Hono()
 
     const { bankId } = c.req.param();
 
+    if (!bankId) {
+      return c.json({ account: null, transactions: [] }, 200);
+    }
+
     // get bank from db
     const bank = await getBank({ userId: user.id, bankId: Number(bankId) });
 

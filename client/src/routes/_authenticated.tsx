@@ -1,5 +1,6 @@
 import PlaidLink from "@/components/PlaidLink";
 import { UserProps } from "@/server/lib/middleware";
+import AuthLayout from "@/components/layouts/AuthLayout";
 import { authUserQueryOptions, bankCountQueryOptions } from "@/lib/api";
 import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
 
@@ -25,7 +26,14 @@ export const Route = createFileRoute("/_authenticated")({
     }
 
     if (user && bankCount === 0) {
-      return <PlaidLink user={user as UserProps} variant="primary" />;
+      return (
+        <AuthLayout
+          title={`Welcome, ${user.firstName}`}
+          subTitle="Connect your bank account"
+        >
+          <PlaidLink user={user as UserProps} variant="primary" />
+        </AuthLayout>
+      );
     }
 
     return <Outlet />;
