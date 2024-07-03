@@ -94,45 +94,12 @@ export const getInstitution = async ({
   }
 };
 
-export const getFewTransactions = async ({
-  accessToken,
-}: {
-  accessToken: string;
-}) => {
-  try {
-    const response = await plaidClient.transactionsSync({
-      access_token: accessToken,
-      count: 5,
-    });
-
-    const transactions: any[] = response.data.added.map((transaction) => ({
-      id: transaction.transaction_id,
-      name: transaction.name,
-      paymentChannel: transaction.payment_channel,
-      type: transaction.payment_channel,
-      accountId: transaction.account_id,
-      amount: transaction.amount,
-      pending: transaction.pending,
-      category: transaction.category ? transaction.category[0] : "",
-      date: transaction.date,
-      image: transaction.logo_url,
-    }));
-
-    return transactions;
-  } catch (error) {
-    console.error(
-      "An error occurred while getting the account few transactions:",
-      error
-    );
-
-    return [];
-  }
-};
-
 export const getTransactions = async ({
   accessToken,
+  count,
 }: {
   accessToken: string;
+  count?: number;
 }) => {
   let hasMore = true;
 
@@ -142,6 +109,7 @@ export const getTransactions = async ({
     while (hasMore) {
       const response = await plaidClient.transactionsSync({
         access_token: accessToken,
+        count: count || undefined,
       });
 
       const data = response.data;
@@ -165,7 +133,7 @@ export const getTransactions = async ({
     return transactions;
   } catch (error) {
     console.error(
-      "An error occurred while getting the account transactions:",
+      "An error occurred while getting the account few transactions:",
       error
     );
 

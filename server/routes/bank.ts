@@ -7,7 +7,7 @@ import {
   type BankProps,
   getInstitution,
   getBank,
-  getFewTransactions,
+  getTransactions,
 } from "../lib/bank";
 
 export const bankRoute = new Hono()
@@ -84,7 +84,7 @@ export const bankRoute = new Hono()
 
     const accountData = accountsResponse.data.accounts[0];
 
-    // get transfer transactions from db
+    // get few transfer transactions from db
 
     // get institution info from plaid
     const institution = await getInstitution({
@@ -95,8 +95,10 @@ export const bankRoute = new Hono()
       return c.json({ error: "Something went wrong" }, 400);
     }
 
-    const transactions = await getFewTransactions({
+    // Get bank transactions from plaid
+    const transactions = await getTransactions({
       accessToken: bank?.accessToken,
+      count: 5,
     });
 
     const account = {

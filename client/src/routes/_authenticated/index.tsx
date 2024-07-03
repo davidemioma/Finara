@@ -1,49 +1,26 @@
+import useAccount from "@/hooks/use-account";
 import Widget from "../../components/Widget";
 import Heading from "../../components/Heading";
-import { useQuery } from "@tanstack/react-query";
 import AppLayout from "../../components/layouts/AppLayout";
 import { createFileRoute } from "@tanstack/react-router";
 import TotalBalanceBox from "../../components/TotalBalanceBox";
 import RecentTransactions from "@/components/RecentTransactions";
 import TotalBoxSkeleton from "@/components/skeletons/TotalBoxSkeleton";
-import { authUserQueryOptions, accountsQueryOptions, api } from "@/lib/api";
+import TransactionsSkeleton from "@/components/skeletons/TransactionsSkeleton";
 
 export const Route = createFileRoute("/_authenticated/")({
   component: () => {
-    const urlSearchString = window.location.search;
-
-    const searchParams = new URLSearchParams(urlSearchString);
-
-    const id = searchParams.get("id") || undefined;
-
-    const { data: user, isLoading, isError } = useQuery(authUserQueryOptions);
-
     const {
+      bankId,
+      user,
       data,
-      isLoading: accsLoading,
-      isError: accsErr,
-    } = useQuery(accountsQueryOptions);
-
-    const bankId = id ? id : `${data?.accounts?.[0].dbBankId}`;
-
-    const { data: accountData, isLoading: accLoading } = useQuery({
-      queryKey: ["get-first-account", bankId],
-      queryFn: async () => {
-        if (!bankId) return;
-
-        const res = await api.bank.account[":bankId"].$get({
-          param: {
-            bankId,
-          },
-        });
-
-        if (!res.ok) {
-          throw new Error("Something went wrong");
-        }
-
-        return res.json();
-      },
-    });
+      accsLoading,
+      accsErr,
+      accountData,
+      accLoading,
+      isLoading,
+      isError,
+    } = useAccount();
 
     return (
       <AppLayout>
@@ -73,7 +50,7 @@ export const Route = createFileRoute("/_authenticated/")({
                 bankId={bankId}
               />
             ) : (
-              accLoading && <div>Transactions Skeleton</div>
+              accLoading && <TransactionsSkeleton />
             )}
           </div>
 
