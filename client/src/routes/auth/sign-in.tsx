@@ -1,8 +1,9 @@
 import { toast } from "sonner";
 import { ZodError } from "zod";
 import { useState } from "react";
-import Spinner from "@/components/Spinner";
 import { useForm } from "react-hook-form";
+import Spinner from "@/components/Spinner";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/CustomInput";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +23,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/auth/sign-in")({
   component: () => {

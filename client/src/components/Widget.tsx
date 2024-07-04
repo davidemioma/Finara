@@ -1,6 +1,7 @@
 import BankCard from "./BankCard";
+import PlaidLink from "./PlaidLink";
+import { UserProps } from "@/server/lib/middleware";
 import { AccountProps, TransactionProps } from "@/types";
-import { Link } from "@tanstack/react-router";
 
 type Props = {
   user: {
@@ -41,17 +42,7 @@ const Widget = ({ user, transactions, banks }: Props) => {
         <div className="flex w-full items-center justify-between">
           <h2 className="header-2">My Banks</h2>
 
-          <Link href="/" className="flex gap-2">
-            <img
-              src="/icons/plus.svg"
-              width={20}
-              height={20}
-              alt="plus"
-              loading="lazy"
-            />
-
-            <h2 className="text-14 font-semibold text-gray-600">Add Bank</h2>
-          </Link>
+          <PlaidLink user={user as UserProps} />
         </div>
 
         {banks.length > 0 && (

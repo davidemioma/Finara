@@ -1,39 +1,18 @@
 import { api } from "@/lib/api";
+import { formatAmount } from "@/lib/utils";
 import Heading from "@/components/Heading";
 import useAccount from "@/hooks/use-account";
+import ErrorCard from "@/components/ErrorCard";
+import BankSelect from "@/components/BankSelect";
 import { useQuery } from "@tanstack/react-query";
 import AppLayout from "@/components/layouts/AppLayout";
-import { formUrlQuery, formatAmount } from "@/lib/utils";
+import { createFileRoute } from "@tanstack/react-router";
 import TransactionsTable from "@/components/TransactionsTable";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import TotalBoxSkeleton from "@/components/skeletons/TotalBoxSkeleton";
 import TransactionsSkeleton from "@/components/skeletons/TransactionsSkeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/transaction-history")({
   component: () => {
-    const navigate = useNavigate();
-
-    const urlSearchString = window.location.search;
-
-    const searchParams = new URLSearchParams(urlSearchString);
-
-    const onClick = (id: string) => {
-      const newUrl = formUrlQuery({
-        params: searchParams.toString(),
-        key: "id",
-        value: id,
-      });
-
-      navigate({ to: newUrl });
-    };
-
     const {
       bankId,
       accountData,
@@ -67,28 +46,14 @@ export const Route = createFileRoute("/_authenticated/transaction-history")({
     return (
       <AppLayout>
         <div className="no-scrollbar flex h-screen w-full flex-col gap-8 overflow-y-scroll bg-gray-25 p-8 xl:py-12">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <Heading
               type="title"
               title="Transaction History,"
               subtitle="See your bank details and transactions."
             />
 
-            {banks && (
-              <Select onValueChange={(value) => onClick(value)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Accounts" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {banks?.accounts.map((acc) => (
-                    <SelectItem key={acc.id} value={`${acc.dbBankId}`}>
-                      {acc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            {banks && <BankSelect accounts={banks.accounts} />}
           </div>
 
           {!accLoading && !accErr && accountData ? (
@@ -135,9 +100,7 @@ export const Route = createFileRoute("/_authenticated/transaction-history")({
             <TransactionsSkeleton />
           ) : (
             isError && (
-              <div className="py-4 text-center text-lg font-semibold">
-                Something went wrong! can't get transactions.
-              </div>
+              <ErrorCard message="Something went wrong! can't get transactions." />
             )
           )}
         </div>

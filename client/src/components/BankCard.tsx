@@ -1,3 +1,4 @@
+import Copy from "./Copy";
 import { AccountProps } from "@/types";
 import { Link } from "@tanstack/react-router";
 import { formatAmount } from "../lib/utils";
@@ -11,7 +12,7 @@ type Props = {
 const BankCard = ({ username, account, showBalance = true }: Props) => {
   return (
     <div className="w-full">
-      <Link to={`/`}>
+      <Link to={`/transaction-history?id=${account.dbBankId}`}>
         <div className="flex h-[190px] w-full justify-between rounded-[20px] border border-white bg-bank-gradient shadow-creditCard backdrop-blur-[6px]">
           <div className="flex h-full w-full flex-1 flex-col justify-between rounded-l-[20px] bg-gray-700 bg-bank-gradient px-5 pb-4 pt-5">
             <div>
@@ -73,6 +74,8 @@ const BankCard = ({ username, account, showBalance = true }: Props) => {
           />
         </div>
       </Link>
+
+      {showBalance && <Copy title={account.sharaebleId} />}
     </div>
   );
 };

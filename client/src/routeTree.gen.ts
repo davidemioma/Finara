@@ -21,6 +21,8 @@ import { Route as AuthNewPasswordImport } from './routes/auth/new-password'
 import { Route as AuthNewEmailImport } from './routes/auth/new-email'
 import { Route as AuthenticatedTransactionHistoryImport } from './routes/_authenticated/transaction-history'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedPaymentTransferImport } from './routes/_authenticated/payment-transfer'
+import { Route as AuthenticatedMyBanksImport } from './routes/_authenticated/my-banks'
 
 // Create/Update Routes
 
@@ -75,6 +77,17 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
+const AuthenticatedPaymentTransferRoute =
+  AuthenticatedPaymentTransferImport.update({
+    path: '/payment-transfer',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedMyBanksRoute = AuthenticatedMyBanksImport.update({
+  path: '/my-banks',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -85,6 +98,20 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/my-banks': {
+      id: '/_authenticated/my-banks'
+      path: '/my-banks'
+      fullPath: '/my-banks'
+      preLoaderRoute: typeof AuthenticatedMyBanksImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/payment-transfer': {
+      id: '/_authenticated/payment-transfer'
+      path: '/payment-transfer'
+      fullPath: '/payment-transfer'
+      preLoaderRoute: typeof AuthenticatedPaymentTransferImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
@@ -156,6 +183,8 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   AuthenticatedRoute: AuthenticatedRoute.addChildren({
+    AuthenticatedMyBanksRoute,
+    AuthenticatedPaymentTransferRoute,
     AuthenticatedSettingsRoute,
     AuthenticatedTransactionHistoryRoute,
     AuthenticatedIndexRoute,
@@ -188,10 +217,20 @@ export const routeTree = rootRoute.addChildren({
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/my-banks",
+        "/_authenticated/payment-transfer",
         "/_authenticated/settings",
         "/_authenticated/transaction-history",
         "/_authenticated/"
       ]
+    },
+    "/_authenticated/my-banks": {
+      "filePath": "_authenticated/my-banks.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/payment-transfer": {
+      "filePath": "_authenticated/payment-transfer.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/settings": {
       "filePath": "_authenticated/settings.tsx",

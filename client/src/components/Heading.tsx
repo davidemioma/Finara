@@ -7,7 +7,7 @@ type Props = {
 
 const Heading = ({ title, subtitle, user, type = "title" }: Props) => {
   return (
-    <header className="flex flex-col gap-1">
+    <header className="flex flex-col gap-1.5">
       <h1 className="text-xl font-semibold text-gray-900 sm:text-[24px] lg:text-[30px]">
         {title}
         {type === "greeting" && user && (
