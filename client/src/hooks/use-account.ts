@@ -25,7 +25,7 @@ const useAccount = () => {
     isLoading: accLoading,
     isError: accErr,
   } = useQuery({
-    queryKey: ["get-first-account", bankId],
+    queryKey: ["get-account", bankId],
     queryFn: async () => {
       if (!bankId) return;
 

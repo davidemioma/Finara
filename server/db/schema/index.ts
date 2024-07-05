@@ -6,6 +6,7 @@ import {
   boolean,
   integer,
   date,
+  numeric,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -80,4 +81,22 @@ export const banks = pgTable("banks", {
 
 export const transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
+  note: text("note").notNull(),
+  channel: text("channel").notNull(),
+  category: text("category").notNull(),
+  email: text("email").notNull(),
+  senderId: integer("sender_id")
+    .references(() => users.id, { onDelete: "set null" })
+    .notNull(),
+  recieverId: integer("reciever_id")
+    .references(() => users.id, { onDelete: "set null" })
+    .notNull(),
+  senderBankId: integer("sender_bank_id")
+    .references(() => banks.id, { onDelete: "set null" })
+    .notNull(),
+  recieverBankId: integer("reciever_bank_id")
+    .references(() => banks.id, { onDelete: "set null" })
+    .notNull(),
+  amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  date: timestamp("created_at").defaultNow(),
 });

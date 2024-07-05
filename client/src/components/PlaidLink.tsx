@@ -45,11 +45,11 @@ const PlaidLink = ({ user, variant }: Props) => {
     },
     onSuccess: () => {
       queryClient.refetchQueries({
-        queryKey: [
-          bankCountQueryOptions.queryKey,
-          accountsQueryOptions.queryKey,
-          "get-first-account",
-        ],
+        queryKey: [accountsQueryOptions.queryKey],
+      });
+
+      queryClient.refetchQueries({
+        queryKey: [bankCountQueryOptions.queryKey],
       });
     },
     onError: (err) => {

@@ -248,7 +248,7 @@ export const userRoute = new Hono()
         accountId: accountData.account_id,
         accessToken,
         fundingSourceUrl: fundingSourceUrl || "",
-        shareableId: btoa(accountData.account_id),
+        shareableId: btoa(accountData.account_id), //Encrypt sharable id
       });
 
       return c.json({ message: "Bank created!" }, 201);

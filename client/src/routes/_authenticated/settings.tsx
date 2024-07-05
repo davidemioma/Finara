@@ -74,14 +74,10 @@ export const Route = createFileRoute("/_authenticated/settings")({
         return res;
       },
       onSuccess: (res) => {
-        if (res.ok) {
-          if (res.status === 202) {
-            toast.success("Confirmation link has been sent to your new email");
-          } else {
-            toast.success("Settings updated");
-          }
-
-          form.reset();
+        if (res.status === 202) {
+          toast.success("Confirmation link has been sent to your new email");
+        } else {
+          toast.success("Settings updated");
 
           queryClient.invalidateQueries({
             queryKey: [authUserQueryOptions.queryKey],
@@ -236,8 +232,12 @@ export const Route = createFileRoute("/_authenticated/settings")({
                   </div>
                 </div>
 
-                <div className="flex w-full justify-end disabled:cursor-not-allowed">
-                  <Button disabled={isPending} type="submit">
+                <div className="flex justify-center">
+                  <Button
+                    className="w-full max-w-[200px]"
+                    disabled={isPending}
+                    type="submit"
+                  >
                     {isPending ? <Spinner /> : "Save"}
                   </Button>
                 </div>

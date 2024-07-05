@@ -1,22 +1,30 @@
 import { ZodError } from "zod";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { CreditCard } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { formatAmount } from "@/lib/utils";
 import Spinner from "@/components/Spinner";
 import Heading from "@/components/Heading";
 import useAccount from "@/hooks/use-account";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import BankSelect from "@/components/BankSelect";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { accountsQueryOptions, api } from "@/lib/api";
 import AppLayout from "@/components/layouts/AppLayout";
-import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   TransferSchema,
   TransferValidator,
 } from "../../../../server/lib/validators/transfer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -29,7 +37,11 @@ import {
 
 export const Route = createFileRoute("/_authenticated/payment-transfer")({
   component: () => {
-    const { data: banks } = useAccount();
+    const navigate = useNavigate();
+
+    const { data: banks, bankId } = useAccount();
+
+    const queryClient = useQueryClient();
 
     const form = useForm<TransferValidator>({
       resolver: zodResolver(TransferSchema),
@@ -37,15 +49,47 @@ export const Route = createFileRoute("/_authenticated/payment-transfer")({
         note: "",
         email: "",
         amount: 0,
-        senderBank: "",
+        senderBank: banks?.accounts[0].dbBankId
+          ? `${banks?.accounts[0].dbBankId}`
+          : "",
         sharaebleId: "",
       },
     });
 
     const { mutate, isPending } = useMutation({
       mutationKey: ["transfer"],
-      mutationFn: async (values: TransferValidator) => {},
-      onSuccess: (res) => {},
+      mutationFn: async (values: TransferValidator) => {
+        const res = await api.transaction.create.$post({ json: values });
+
+        if (!res.ok) {
+          const data = await res.json();
+
+          throw new Error(data.error);
+        }
+
+        const data = await res.json();
+
+        return data;
+      },
+      onSuccess: (data) => {
+        form.reset();
+
+        toast.success(data.message);
+
+        queryClient.refetchQueries({
+          queryKey: [accountsQueryOptions.queryKey],
+        });
+
+        queryClient.refetchQueries({
+          queryKey: ["get-account", bankId],
+        });
+
+        queryClient.refetchQueries({
+          queryKey: ["get-transactions-by-bank", bankId],
+        });
+
+        navigate({ to: "/" });
+      },
       onError: (err) => {
         if (err instanceof ZodError) {
           toast.error(err.issues.map((issues) => issues.message).join(" ,"));
@@ -99,14 +143,51 @@ export const Route = createFileRoute("/_authenticated/payment-transfer")({
                         </div>
 
                         <div className="flex flex-1 flex-col gap-1">
-                          <FormControl>
-                            {banks && (
-                              <BankSelect
-                                accounts={banks?.accounts}
-                                setValue={(value) => field.onChange(value)}
-                              />
-                            )}
-                          </FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                {field.value ? (
+                                  <div className="flex w-full items-center gap-3 bg-white">
+                                    <CreditCard className="h-7 w-7 text-bankGradient" />
+
+                                    <p className="line-clamp-1 w-full text-left">
+                                      {
+                                        banks?.accounts.find(
+                                          (acc) =>
+                                            acc.dbBankId ===
+                                            Number(field.value),
+                                        )?.name
+                                      }
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <SelectValue placeholder="Select a bank to display" />
+                                )}
+                              </SelectTrigger>
+                            </FormControl>
+
+                            <SelectContent>
+                              {banks?.accounts?.map((acc) => (
+                                <SelectItem
+                                  key={acc.id}
+                                  value={`${acc.dbBankId}`}
+                                >
+                                  <div className="flex flex-col gap-1">
+                                    <p className="text-[14px] font-medium leading-5">
+                                      {acc.name}
+                                    </p>
+
+                                    <p className="text-[12px] font-medium leading-4 text-blue-600">
+                                      {formatAmount(acc.currentBalance)}
+                                    </p>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
 
                           <FormMessage className="text-[12px] leading-4 text-red-500" />
                         </div>

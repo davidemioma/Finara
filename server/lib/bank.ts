@@ -51,18 +51,12 @@ export const getBank = async ({
   }
 };
 
-export const getBankByAccId = async ({
-  userId,
-  accId,
-}: {
-  userId: number;
-  accId: string;
-}) => {
+export const getBankByAccId = async ({ accId }: { accId: string }) => {
   try {
     const bank = await db
       .select()
       .from(banks)
-      .where(and(eq(banks.userId, userId), eq(banks.accountId, accId)))
+      .where(eq(banks.accountId, accId))
       .then((res) => res[0]);
 
     return bank;

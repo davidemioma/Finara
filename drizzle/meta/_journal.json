@@ -64,6 +64,34 @@
       "when": 1719850916609,
       "tag": "0008_broken_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1720109671855,
+      "tag": "0009_wide_champions",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1720109804148,
+      "tag": "0010_free_liz_osborn",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1720111382766,
+      "tag": "0011_mighty_rocket_raccoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1720194592591,
+      "tag": "0012_unknown_anita_blake",
+      "breakpoints": true
     }
   ]
 }

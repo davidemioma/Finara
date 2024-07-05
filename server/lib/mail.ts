@@ -84,3 +84,18 @@ export const sendPasswordResetEmail = async ({
     html: `<p>Click <a href="${resetLink}">here</a> to reset password.</p>`,
   });
 };
+
+export const sendTransactionConfirmationEmail = async ({
+  email,
+  amount,
+}: {
+  email: string;
+  amount: string;
+}) => {
+  await transporter.sendMail({
+    from,
+    to: email,
+    subject: "Transaction Status",
+    html: `<p>Your transaction of ${amount} was successful. It will take 2 plus days to process</p>`,
+  });
+};

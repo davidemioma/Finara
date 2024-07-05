@@ -35,7 +35,6 @@ export const bankCountQueryOptions = queryOptions({
 
     return data.count;
   },
-  staleTime: Infinity, //This means it will stay cached until a user revalidate this path, refreshes the page or login/logout.
 });
 
 export const accountsQueryOptions = queryOptions({

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AccountProps } from "@/types";
+import { CreditCard } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { cn, formUrlQuery, formatAmount } from "@/lib/utils";
 import {
@@ -33,22 +34,22 @@ const BankSelect = ({ accounts, setValue, className }: Props) => {
 
     setSeclected(account);
 
+    if (setValue) {
+      setValue(id);
+    }
+
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
       key: "id",
       value: id,
     });
 
-    if (setValue) {
-      setValue(id);
-    }
-
     navigate({ to: newUrl });
   };
 
   return (
     <Select
-      defaultValue={selected?.id}
+      defaultValue={selected ? `${selected?.dbBankId}` : ""}
       onValueChange={(value) => onClick(value)}
     >
       <SelectTrigger
@@ -57,13 +58,7 @@ const BankSelect = ({ accounts, setValue, className }: Props) => {
           className,
         )}
       >
-        <img
-          src="icons/credit-card.svg"
-          width={20}
-          height={20}
-          loading="lazy"
-          alt="account"
-        />
+        <CreditCard className="h-7 w-7 text-bankGradient" />
 
         <p className="line-clamp-1 w-full text-left">{selected?.name}</p>
       </SelectTrigger>

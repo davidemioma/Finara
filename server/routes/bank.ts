@@ -1,6 +1,8 @@
 import { db } from "../db";
 import { Hono } from "hono";
+import { or, eq } from "drizzle-orm";
 import { plaidClient } from "../lib/plaid";
+import { transactions } from "../db/schema";
 import { verifyUser } from "../lib/middleware";
 import {
   getBanks,
@@ -69,7 +71,7 @@ export const bankRoute = new Hono()
     // get bank from db
     const bank = await getBank({ userId: user.id, bankId: Number(bankId) });
 
-    if (!bank) {
+    if (!bank || !bank.id) {
       return c.json({ error: "Bank not found" }, 404);
     }
 
@@ -84,8 +86,6 @@ export const bankRoute = new Hono()
 
     const accountData = accountsResponse.data.accounts[0];
 
-    // get few transfer transactions from db
-
     // get institution info from plaid
     const institution = await getInstitution({
       institutionId: accountsResponse.data.item.institution_id!,
@@ -95,8 +95,30 @@ export const bankRoute = new Hono()
       return c.json({ error: "Something went wrong" }, 400);
     }
 
-    // Get bank transactions from plaid
-    const transactions = await getTransactions({
+    // get few transfer transactions from db
+    const transfers = await db
+      .select()
+      .from(transactions)
+      .where(
+        or(
+          eq(transactions.senderBankId, bank.id),
+          eq(transactions.recieverBankId, bank.id)
+        )
+      )
+      .limit(5);
+
+    const transferTransactions = transfers.map((transfer) => ({
+      id: transfer.id,
+      name: transfer.note,
+      amount: transfer.amount,
+      date: transfer.date,
+      paymentChannel: transfer.channel,
+      category: transfer.category,
+      type: transfer.senderBankId === bank.id ? "debit" : "credit",
+    }));
+
+    // Get few bank transactions from plaid
+    const plaidTransactions = await getTransactions({
       accessToken: bank?.accessToken,
       count: 5,
     });
@@ -115,9 +137,10 @@ export const bankRoute = new Hono()
     };
 
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [...transactions, ...[]].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    const allTransactions = [
+      ...plaidTransactions,
+      ...transferTransactions,
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return c.json({ account, transactions: allTransactions }, 200);
   });
