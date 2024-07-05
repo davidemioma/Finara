@@ -1,7 +1,9 @@
 import BankCard from "./BankCard";
+import Category from "./Category";
 import PlaidLink from "./PlaidLink";
 import { UserProps } from "@/server/lib/middleware";
 import { AccountProps, TransactionProps } from "@/types";
+import { countTransactionCategories } from "@/lib/utils";
 
 type Props = {
   user: {
@@ -14,6 +16,8 @@ type Props = {
 };
 
 const Widget = ({ user, transactions, banks }: Props) => {
+  const categories = countTransactionCategories(transactions);
+
   return (
     <aside className="no-scrollbar hidden h-screen w-[360px] overflow-y-scroll border-l border-gray-200 xl:flex xl:flex-col">
       <div className="flex flex-col pb-8">
@@ -70,7 +74,15 @@ const Widget = ({ user, transactions, banks }: Props) => {
         )}
       </div>
 
-      <div></div>
+      <div className="mt-[200px] flex flex-1 flex-col gap-6 px-6 py-10">
+        <h2 className="text-[18px] font-semibold leading-6">Top categories</h2>
+
+        <div className="space-y-5">
+          {categories.map((category) => (
+            <Category key={category.name} category={category} />
+          ))}
+        </div>
+      </div>
     </aside>
   );
 };

@@ -26,15 +26,13 @@ const AuthLayout = ({ children, title, subTitle }: Props) => {
         </div>
       </div>
 
-      <div className="sticky top-0 h-screen w-full bg-sky-1 max-lg:hidden">
+      <div className="sticky top-0 h-screen w-full bg-sky-1">
         <div className="flex h-full w-full items-center justify-end">
           <img
-            className="rounded-l-xl object-contain"
-            src="/icons/auth-image.svg"
-            width={500}
-            height={500}
+            className="h-full w-full object-cover"
+            src="/assets/cover.jpg"
             loading="lazy"
-            alt="Auth image"
+            alt="auth-image"
           />
         </div>
       </div>

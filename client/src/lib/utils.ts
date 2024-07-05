@@ -1,5 +1,5 @@
 import qs from "query-string";
-import { AccountTypes } from "@/types";
+import { AccountTypes, TransactionProps } from "@/types";
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 
@@ -87,4 +87,44 @@ export const getTransactionStatus = (date: Date) => {
   twoDaysAgo.setDate(today.getDate() - 2);
 
   return date > twoDaysAgo ? "Processing" : "Success";
+};
+
+export type CategoryCount = {
+  name: string;
+  count: number;
+  totalCount: number;
+};
+
+export const countTransactionCategories = (
+  transactions: TransactionProps[],
+): CategoryCount[] => {
+  let totalCount = 0;
+
+  const categoryCounts: { [category: string]: number } = {};
+
+  transactions &&
+    transactions.forEach((transaction) => {
+      const category = transaction.category;
+
+      if (categoryCounts.hasOwnProperty(category)) {
+        categoryCounts[category]++;
+      } else {
+        categoryCounts[category] = 1;
+      }
+
+      totalCount++;
+    });
+
+  const aggregatedCategories: CategoryCount[] = Object.keys(categoryCounts).map(
+    (category) => ({
+      name: category,
+      count: categoryCounts[category],
+      totalCount,
+    }),
+  );
+
+  // Sort the aggregatedCategories array by count in descending order
+  aggregatedCategories.sort((a, b) => b.count - a.count);
+
+  return aggregatedCategories;
 };

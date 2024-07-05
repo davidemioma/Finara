@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/CustomInput";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api, authUserQueryOptions } from "@/lib/api";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api, authUserQueryOptions, accountsQueryOptions } from "@/lib/api";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   LoginSchema,
@@ -67,6 +67,10 @@ export const Route = createFileRoute("/auth/sign-in")({
 
             queryClient.invalidateQueries({
               queryKey: [authUserQueryOptions.queryKey],
+            });
+
+            queryClient.refetchQueries({
+              queryKey: [accountsQueryOptions.queryKey],
             });
           }
         }

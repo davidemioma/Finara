@@ -31,6 +31,8 @@ export const Route = createFileRoute("/_authenticated")({
           title={`Welcome, ${user.firstName}`}
           subTitle="Connect your bank account"
         >
+          <div></div>
+
           <PlaidLink user={user as UserProps} variant="primary" />
         </AuthLayout>
       );
