@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated")({
       return <Navigate to="/auth/sign-in" />;
     }
 
-    if (user && bankCount === 0) {
+    if (user && bankCount < 1) {
       return (
         <AuthLayout
           title={`Welcome, ${user.firstName}`}
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_authenticated")({
             </p>
           </div>
 
-          <PlaidLink user={user as UserProps} variant="primary" />
+          <PlaidLink user={user as UserProps} variant="primary" reload />
         </AuthLayout>
       );
     }

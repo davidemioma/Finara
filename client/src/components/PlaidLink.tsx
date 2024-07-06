@@ -13,9 +13,10 @@ import {
 type Props = {
   user: UserProps;
   variant?: "primary" | "ghost";
+  reload?: boolean;
 };
 
-const PlaidLink = ({ user, variant }: Props) => {
+const PlaidLink = ({ user, variant, reload }: Props) => {
   const queryClient = useQueryClient();
 
   const { data: token, isPending: isLoading } = useQuery({
@@ -44,13 +45,14 @@ const PlaidLink = ({ user, variant }: Props) => {
       await api.user["exchange-public-token"].$post({ json: { publicToken } });
     },
     onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: [accountsQueryOptions.queryKey],
+      queryClient.invalidateQueries({
+        queryKey: [
+          bankCountQueryOptions.queryKey,
+          accountsQueryOptions.queryKey,
+        ],
       });
 
-      queryClient.refetchQueries({
-        queryKey: [bankCountQueryOptions.queryKey],
-      });
+      reload && window.location.reload();
     },
     onError: (err) => {
       toast.error(err.message || "Something went wrong");

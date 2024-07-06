@@ -76,15 +76,15 @@ export const Route = createFileRoute("/_authenticated/payment-transfer")({
 
         toast.success(data.message);
 
-        queryClient.refetchQueries({
+        queryClient.invalidateQueries({
           queryKey: [accountsQueryOptions.queryKey],
         });
 
-        queryClient.refetchQueries({
+        queryClient.invalidateQueries({
           queryKey: ["get-account", bankId],
         });
 
-        queryClient.refetchQueries({
+        queryClient.invalidateQueries({
           queryKey: ["get-transactions-by-bank", bankId],
         });
 

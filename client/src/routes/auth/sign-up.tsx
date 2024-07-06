@@ -1,3 +1,4 @@
+import React, { Suspense, lazy } from "react";
 import { toast } from "sonner";
 import { ZodError } from "zod";
 import { api } from "@/lib/api";
@@ -19,6 +20,11 @@ import {
 } from "../../../../server/lib/validators/auth";
 
 export const Route = createFileRoute("/auth/sign-up")({
+  loader: () => (
+    <div className="flex h-screen w-full items-center justify-center">
+      <Spinner />
+    </div>
+  ),
   component: () => {
     const { setCountry } = useCountry();
 
