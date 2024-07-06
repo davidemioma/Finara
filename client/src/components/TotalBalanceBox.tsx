@@ -18,7 +18,7 @@ const TotalBalanceBox = ({
       <div className="flex items-center gap-4 sm:gap-6">
         {accounts && (
           <div className="flex size-full max-w-[100px] items-center sm:max-w-[120px]">
-            <PriceChart accounts={accounts} />
+            {/* <PriceChart accounts={accounts} /> */}
           </div>
         )}
 
