@@ -1,11 +1,11 @@
 import { db } from "../db";
 import { Hono } from "hono";
+import { formatAmount } from "../lib/util";
 import { and, desc, eq, or } from "drizzle-orm";
 import { createTransfer } from "../lib/dwolla";
 import { verifyUser } from "../lib/middleware";
 import { zValidator } from "@hono/zod-validator";
 import { banks, transactions } from "../db/schema";
-import { formatAmount } from "../../client/src/lib/utils";
 import { TransferSchema } from "../lib/validators/transfer";
 import { sendTransactionConfirmationEmail } from "../lib/mail";
 import { getBank, getBankByAccId, getTransactions } from "../lib/bank";

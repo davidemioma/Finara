@@ -7,6 +7,24 @@ import {
   verificationTokens,
 } from "../db/schema";
 
+export const formatAmount = (
+  price: number | string,
+  options: {
+    currency?: "USD" | "EUR" | "GBP" | "BDT";
+    notation?: Intl.NumberFormatOptions["notation"];
+  } = {}
+) => {
+  const { currency = "USD" } = options;
+
+  const numericPrice = typeof price === "string" ? parseFloat(price) : price;
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+  }).format(numericPrice);
+};
+
 export const getVerificationTokenByEmail = async (email: string) => {
   const verficationToken = await db
     .select({
