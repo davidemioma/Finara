@@ -1,1 +1,0 @@
-ALTER TABLE "transactions" ADD COLUMN "created_at" timestamp DEFAULT now();
