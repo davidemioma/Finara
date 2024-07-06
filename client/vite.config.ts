@@ -1,15 +1,19 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import path from "path";
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), TanStackRouterVite(), sentryVitePlugin({
-    org: "david-yhn",
-    project: "finara"
-  })],
+  plugins: [
+    react(),
+    TanStackRouterVite(),
+    sentryVitePlugin({
+      org: "david-yhn",
+      project: "finara",
+    }),
+  ],
 
   resolve: {
     alias: {
@@ -29,6 +33,6 @@ export default defineConfig({
   },
 
   build: {
-    sourcemap: true
-  }
+    sourcemap: true,
+  },
 });

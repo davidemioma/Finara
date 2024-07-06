@@ -1,6 +1,6 @@
 import { AccountProps } from "@/types";
+import PriceChart from "./charts/PriceChart";
 import AnimatedCounter from "./AnimatedCounter";
-import DoughnutChart from "./charts/DoughnutChart";
 
 type Props = {
   accounts: AccountProps[];
@@ -16,9 +16,11 @@ const TotalBalanceBox = ({
   return (
     <section className="w-full rounded-xl border border-gray-200 p-4 shadow-chart sm:p-6">
       <div className="flex items-center gap-4 sm:gap-6">
-        <div className="flex size-full max-w-[100px] items-center sm:max-w-[120px]">
-          <DoughnutChart accounts={accounts} />
-        </div>
+        {accounts && (
+          <div className="flex size-full max-w-[100px] items-center sm:max-w-[120px]">
+            <PriceChart accounts={accounts} />
+          </div>
+        )}
 
         <div className="flex flex-1 flex-col gap-6">
           <div className="flex w-full items-center justify-between gap-4">

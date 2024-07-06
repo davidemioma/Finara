@@ -5,6 +5,7 @@
   "scripts": {
     "start": "bun server/index.ts",
     "dev": "bun --watch server/index.ts",
+    "build": "cd client && bun install && bun run build",
     "db:studio": "bunx drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun migrate.ts"

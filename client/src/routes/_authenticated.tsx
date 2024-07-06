@@ -31,7 +31,19 @@ export const Route = createFileRoute("/_authenticated")({
           title={`Welcome, ${user.firstName}`}
           subTitle="Connect your bank account"
         >
-          <div></div>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-[18px] font-semibold leading-6">
+              This is the sandbox enviroment, To add a bank use:
+            </h1>
+
+            <p className="text-[14px] font-normal leading-5">
+              Username: user_good
+            </p>
+
+            <p className="text-[14px] font-normal leading-5">
+              Password: pass_good
+            </p>
+          </div>
 
           <PlaidLink user={user as UserProps} variant="primary" />
         </AuthLayout>
