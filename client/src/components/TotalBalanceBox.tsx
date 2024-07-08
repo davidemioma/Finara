@@ -1,5 +1,5 @@
 import { AccountProps } from "@/types";
-import PriceChart from "./charts/PriceChart";
+import PriceChart from "./PriceChart";
 import AnimatedCounter from "./AnimatedCounter";
 
 type Props = {
@@ -17,8 +17,8 @@ const TotalBalanceBox = ({
     <section className="w-full rounded-xl border border-gray-200 p-4 shadow-chart sm:p-6">
       <div className="flex items-center gap-4 sm:gap-6">
         {accounts && (
-          <div className="flex size-full max-w-[100px] items-center sm:max-w-[120px]">
-            {/* <PriceChart accounts={accounts} /> */}
+          <div className="hidden size-full max-w-[250px] items-center sm:flex">
+            <PriceChart accounts={accounts} />
           </div>
         )}
 
