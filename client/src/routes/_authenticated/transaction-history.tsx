@@ -5,11 +5,13 @@ import useAccount from "@/hooks/use-account";
 import ErrorCard from "@/components/ErrorCard";
 import BankSelect from "@/components/BankSelect";
 import { useQuery } from "@tanstack/react-query";
+import { Pagination } from "@/components/Pagination";
 import AppLayout from "@/components/layouts/AppLayout";
 import { createFileRoute } from "@tanstack/react-router";
 import TransactionsTable from "@/components/TransactionsTable";
 import TotalBoxSkeleton from "@/components/skeletons/TotalBoxSkeleton";
 import TransactionsSkeleton from "@/components/skeletons/TransactionsSkeleton";
+import { TRANSACTIONSPERPAGE } from "../../../../server/lib/validators/transfer";
 
 export const Route = createFileRoute("/_authenticated/transaction-history")({
   component: () => {
@@ -19,14 +21,16 @@ export const Route = createFileRoute("/_authenticated/transaction-history")({
       accLoading,
       accErr,
       data: banks,
+      page,
     } = useAccount();
 
     const { data, isLoading, isError } = useQuery({
-      queryKey: ["get-transactions-by-bank", bankId],
+      queryKey: ["get-transactions-by-bank", bankId, page],
       queryFn: async () => {
-        const res = await api.transaction[":bankId"].$get({
+        const res = await api.transaction[":bankId"][":page"].$get({
           param: {
             bankId,
+            page: page || "1",
           },
         });
 
@@ -95,6 +99,15 @@ export const Route = createFileRoute("/_authenticated/transaction-history")({
               </div>
 
               <TransactionsTable transactions={data.transactions} />
+
+              {data.totalTransactions.count > TRANSACTIONSPERPAGE && (
+                <Pagination
+                  page={Number(page) || 1}
+                  totalPages={
+                    data?.totalTransactions.count / TRANSACTIONSPERPAGE
+                  }
+                />
+              )}
             </div>
           ) : isLoading ? (
             <TransactionsSkeleton />

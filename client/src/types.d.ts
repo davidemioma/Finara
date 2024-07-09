@@ -59,16 +59,13 @@ export type AccountProps = {
 };
 
 export type TransactionProps = {
-  id: string;
+  id: number | string;
   name: string;
+  amount: string;
+  date: string | null;
   paymentChannel: string;
-  type: string;
-  accountId: string;
-  amount: number;
-  pending: boolean;
   category: string;
-  date: string;
-  image: string;
+  type: string;
 };
 
 export type AccountTypes =

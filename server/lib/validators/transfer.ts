@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const TRANSACTIONSPERPAGE = 10;
+
 export const TransferSchema = z.object({
   email: z
     .string()

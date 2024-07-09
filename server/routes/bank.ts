@@ -105,7 +105,7 @@ export const bankRoute = new Hono()
           eq(transactions.recieverBankId, bank.id)
         )
       )
-      .limit(5);
+      .limit(10);
 
     const transferTransactions = transfers.map((transfer) => ({
       id: transfer.id,
@@ -118,10 +118,10 @@ export const bankRoute = new Hono()
     }));
 
     // Get few bank transactions from plaid
-    const plaidTransactions = await getTransactions({
-      accessToken: bank?.accessToken,
-      count: 5,
-    });
+    // const plaidTransactions = await getTransactions({
+    //   accessToken: bank?.accessToken,
+    //   count: 5,
+    // });
 
     const account = {
       id: accountData.account_id,
@@ -137,10 +137,10 @@ export const bankRoute = new Hono()
     };
 
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [
-      ...plaidTransactions,
-      ...transferTransactions,
-    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    // const allTransactions = [
+    //   ...plaidTransactions,
+    //   ...transferTransactions,
+    // ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    return c.json({ account, transactions: allTransactions }, 200);
+    return c.json({ account, transactions: transferTransactions }, 200);
   });

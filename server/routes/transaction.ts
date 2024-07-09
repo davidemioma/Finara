@@ -1,20 +1,23 @@
 import { db } from "../db";
 import { Hono } from "hono";
 import { formatAmount } from "../lib/util";
-import { and, desc, eq, or } from "drizzle-orm";
 import { createTransfer } from "../lib/dwolla";
 import { verifyUser } from "../lib/middleware";
 import { zValidator } from "@hono/zod-validator";
 import { banks, transactions } from "../db/schema";
-import { TransferSchema } from "../lib/validators/transfer";
+import { and, count, desc, eq, or } from "drizzle-orm";
 import { sendTransactionConfirmationEmail } from "../lib/mail";
 import { getBank, getBankByAccId, getTransactions } from "../lib/bank";
+import {
+  TRANSACTIONSPERPAGE,
+  TransferSchema,
+} from "../lib/validators/transfer";
 
 export const transactionRoute = new Hono()
-  .get("/:bankId", verifyUser, async (c) => {
+  .get("/:bankId/:page", verifyUser, async (c) => {
     const user = c.var.user;
 
-    const { bankId } = c.req.param();
+    const { bankId, page } = c.req.param();
 
     if (!bankId) {
       return c.json({ error: "Bank ID not found" }, 404);
@@ -33,6 +36,20 @@ export const transactionRoute = new Hono()
       return c.json({ error: "Bank not found" }, 404);
     }
 
+    //Transactions count
+    const transactionsCount = await db
+      .select({
+        count: count(),
+      })
+      .from(transactions)
+      .where(
+        or(
+          eq(transactions.senderBankId, bank.id),
+          eq(transactions.recieverBankId, bank.id)
+        )
+      )
+      .then((res) => res[0]);
+
     // Get transfer transactions from db
     const transfers = await db
       .select()
@@ -43,8 +60,9 @@ export const transactionRoute = new Hono()
           eq(transactions.recieverBankId, bank.id)
         )
       )
-      .orderBy(desc(transactions.date))
-      .limit(10);
+      .limit(TRANSACTIONSPERPAGE)
+      .offset((Number(page) - 1) * TRANSACTIONSPERPAGE)
+      .orderBy(desc(transactions.date));
 
     const transferTransactions = transfers.map((transfer) => ({
       id: transfer.id,
@@ -57,18 +75,24 @@ export const transactionRoute = new Hono()
     }));
 
     // Get bank transactions from plaid
-    const plaidTransactions = await getTransactions({
-      accessToken: bank?.accessToken,
-      count: 10,
-    });
+    // const plaidTransactions = await getTransactions({
+    //   accessToken: bank?.accessToken,
+    //   count: 10,
+    // });
 
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [
-      ...plaidTransactions,
-      ...transferTransactions,
-    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    // const allTransactions = [
+    //   ...plaidTransactions,
+    //   ...transferTransactions,
+    // ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    return c.json({ transactions: allTransactions }, 200);
+    return c.json(
+      {
+        transactions: transferTransactions,
+        totalTransactions: transactionsCount,
+      },
+      200
+    );
   })
   .post(
     "/create",
