@@ -225,11 +225,12 @@ export const authRoute = new Hono()
       !userExists.dwollaCustomerId?.trim() ||
       !userExists.dwollaCustomerUrl?.trim()
     ) {
-      const { id: _, address, state, postcode, ...rest } = userExists;
+      const { id: _, address, ssn, state, postcode, ...rest } = userExists;
 
       // Verify email and set dwolla customer Id and url
       const dwollaCustomerUrl = await createDwollaCustomer({
         ...rest,
+        ssn: "1234", //For sandbox mode because it only allows usa social security number
         address1: address,
         state: "NY", //For sandbox mode because it only allows usa states and 2 digit code.
         postalCode: "12345", //For sandbox mode because it only allows usa postal codes.
